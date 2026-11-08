@@ -1,0 +1,16 @@
+CREATE TABLE competition_schema(version INTEGER PRIMARY KEY);
+INSERT INTO competition_schema VALUES(1);
+CREATE TABLE bounty_contributions(id TEXT PRIMARY KEY, target TEXT NOT NULL, contributor TEXT NOT NULL, amount INTEGER NOT NULL CHECK(amount>0 AND typeof(amount)='integer'), remaining INTEGER NOT NULL CHECK(remaining>=0 AND remaining<=amount), created INTEGER NOT NULL);
+CREATE INDEX bounty_target ON bounty_contributions(target,remaining);
+CREATE TABLE competition_requests(id TEXT PRIMARY KEY);
+CREATE TABLE bounty_claims(id TEXT PRIMARY KEY,target TEXT NOT NULL,killer TEXT NOT NULL,amount INTEGER NOT NULL,created INTEGER NOT NULL);
+CREATE INDEX bounty_pair ON bounty_claims(target,killer,created);
+CREATE TABLE competition_payouts(id TEXT PRIMARY KEY,recipient TEXT NOT NULL,amount INTEGER NOT NULL CHECK(amount>0 AND typeof(amount)='integer'),source TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN ('PENDING','COMPLETED')),created INTEGER NOT NULL,completed INTEGER,attempts INTEGER NOT NULL DEFAULT 0,last_error TEXT);
+CREATE TABLE king_events(id TEXT PRIMARY KEY,slot TEXT UNIQUE,status TEXT NOT NULL CHECK(status IN ('COUNTDOWN','ACTIVE','FINISHED','CANCELED')),created INTEGER NOT NULL,starts INTEGER NOT NULL,ends INTEGER NOT NULL,candidate TEXT,progress REAL NOT NULL DEFAULT 0,winner TEXT,prize INTEGER NOT NULL CHECK(prize>=0),treasury TEXT NOT NULL,finished INTEGER);
+CREATE UNIQUE INDEX one_live_king_event ON king_events((1)) WHERE status IN ('COUNTDOWN','ACTIVE');
+CREATE TABLE king_participants(event TEXT NOT NULL REFERENCES king_events(id),player TEXT NOT NULL,PRIMARY KEY(event,player));
+CREATE TABLE king_victories(event TEXT PRIMARY KEY REFERENCES king_events(id),player TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE TABLE king_scheduling(name TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE VIEW bounties AS SELECT target, SUM(remaining) AS amount FROM bounty_contributions WHERE remaining>0 GROUP BY target;
+CREATE VIEW king_statistics AS SELECT player,COUNT(*) AS victories FROM king_victories GROUP BY player;
+CREATE INDEX bounty_killer ON bounty_claims(killer,created);

@@ -176,3 +176,135 @@ collision, PvP/friendly-fire, equipment/break/death/respawn/world-change, GUI an
 anti-duplication regression tests. Re-run the real-server probe, Maven and CI,
 update this report, then promote the draft only after those criteria pass.
 Do not implement Phase 3.
+
+## Phase 3 — Bounties and King of the SMP
+
+Branch `phase3/competitions` continues `phase2/gameplay`; the Phase 2 review
+limitations remain unchanged. Phase 3 adds only Core competition code, its
+configuration/tests, documentation and an artifact workflow. It does not change
+Common/Lobby/Velocity implementations or implement Phase 4.
+
+### Economy and durable payouts
+
+Both systems use the **existing Phase 1 `polder.db` accounts ledger**, in whole
+currency units. No separate currency, balance table, minting command or automatic
+Vault conversion is added. Phase 7 can supply a Bukkit `Economy` service before
+Core starts; its debit/credit implementation must participate in the supplied
+SQLite connection/transaction and have no external side effects. Without one,
+the Phase 1 implementation is selected. A conventional non-idempotent Vault
+API cannot safely promise exactly-once credits across a process crash; it is
+therefore not silently substituted or mirrored. This implements the existing
+local-economy option rather than introducing a competing Vault balance.
+
+Bounty contributions debit existing balances and become escrow in one
+transaction. A confirmed claim atomically consumes that escrow, records the kill
+and reserves a unique payout. The recovery worker credits the recipient and
+marks that payout completed in the same SQLite transaction. Restarting or
+repeating a claim/recovery cannot pay again. Failure leaves a pending payout;
+credit overflow rolls back only that payout so other recipients can still be
+paid. Recovery runs every five seconds. `/king status` shows the pending count;
+`competition_payouts` retains status, attempts, last error and completion times.
+No gameplay handler waits for SQL.
+
+This foundation does not create starting money. An existing funded Phase 1
+account or a future transactional economy provider is required to place a bounty.
+Test account funding occurs only in test fixtures. Back up `polder.db` normally;
+its existing backup API includes all competition data.
+
+### Bounties
+
+`bounties.yml` independently enables bounties and configures funding limits,
+large-bounty announcements, anti-farming times, same-address checks, particles,
+sounds and the 54-slot GUI. Names resolve only from Paper's player cache; UUIDs
+support uncached/offline players without blocking Mojang lookups.
+
+- `/bounty <known-player|UUID> <whole-amount>` adds your funded contribution.
+- `/bounty info <player|UUID>` shows the current total and recent claim history.
+- `/bounties` and `/bounty top` open a ranked player-head GUI with bounty totals,
+  bounty-kill statistics, contributor counts, target UUIDs and pagination.
+- `/bountyadmin clear <player|UUID>` queues refunds of all unclaimed contributions.
+- `/bountyadmin set <player|UUID> <amount>` changes the total. Increases debit the
+  administrator's existing balance; console increases require a configured,
+  funded `admin-funding-account`. Reductions refund original contributors in
+  contribution order. Admin set never creates currency.
+
+`polder.bounty.use` defaults true; `polder.bounty.admin` defaults op. GUI previews
+cannot be removed through click, drag, shift or hotbar operations.
+
+Claims require a real PlayerDeathEvent and a final direct-player or player-shot
+projectile damage source matching the credited killer. Environmental kills,
+self-claims, same-scoreboard-team claims, disallowed world PvP and claims rejected
+by a registered AbilityGuard are excluded. Survival/adventure modes, minimum
+victim play/life times, optional same-address blocking and a persistent symmetric
+killer/victim cooldown reduce farming. Defaults block the same pair for 24 hours.
+Same-address checks require correctly configured Velocity forwarding; households
+may need an operator-reviewed exception by disabling that setting. These measures
+cannot prove that two independently connected accounts belong to different people.
+
+### Weekly King competition
+
+`king.yml` defaults to Saturday **20:00 Europe/Amsterdam**, radius 7, capture time
+120 seconds, maximum active duration 20 minutes, minimum 2 eligible participants
+and a 60-second countdown. Scheduling uses zone-aware Java time, including DST.
+A due event waits up to five minutes for participants; a missed window is skipped
+instead of replaying historical events. Weekly slots are unique in SQLite.
+
+Set up the arena on a Paper PvP world with `/king setarena`, then stand on the
+objective and run `/king setcapturepoint`. The arena is a configurable spherical
+area (radius 64 by default); the objective must lie inside it. Commands persist
+positions in king.yml without editing worlds or protection settings. Configure
+region/claim plugins to permit intended arena PvP; this plugin does not bypass
+those plugins or force-enable a world's PvP flag.
+
+`/king` opens the 54-slot information GUI. `/king status`, `/king current`,
+`/king top`, `/king history` provide text views. `/king start`, `/king end`,
+`/king setarena`, `/king setcapturepoint`, `/king reload` require
+`polder.king.admin` (op by default). `polder.king.view` and `polder.king.play`
+default true; `polder.king.exempt` and `polder.king.current` default false.
+Exempt, vanished, invulnerable, dead, spectator and creative players do not count.
+
+Only one eligible player inside the capture sphere can make progress, with at
+least the configured participant count currently in the arena. Another candidate
+resets progress; an empty objective resets it. Contention pauses by default, or
+resets with `reset-when-contested`. Progress is checkpointed each second and
+never accrues while the server is offline. The event ID, deadlines, candidate,
+progress, participants and history survive restart. An expired event ends without
+an invented winner. Keep arena/capture rules unchanged while a persisted event is
+active, including when editing files during downtime; online reload/reconfiguration
+is blocked during active events. A server shutdown suspends the event rather than
+canceling its reserved prize. Boss bars/tasks are removed on shutdown and restored
+when appropriate after startup.
+
+The title is `[👑 King] PlayerName`, represented by a plugin-owned
+`polder.king.current` attachment and an optional chat-renderer prefix. It adds no
+LuckPerms group and never replaces Owner/Admin/staff groups or prefixes. Chat
+plugins can use this separate permission and disable `title.chat-prefix` if they
+manage their own title rendering. Changing King removes the previous attachment
+and assigns the new one; current King is restored from SQLite on login/restart.
+
+By default the reward is the title/statistics and **zero minted money**. Set
+`rewards.money` and a funded existing `rewards.treasury` UUID to award cash.
+Cash is reserved when an event starts, paid once to a valid winner, or refunded
+on cancellation/timeout/admin end. Ending an event never chooses an arbitrary
+leader. Current King changes only after a successful persisted victory. Financial
+changes, victory recording and payout reservation are transactional.
+
+`/king reload` validates and reloads both competition configs/messages while idle.
+The foundation database must be enabled for both systems. Disabling bounties does
+not discard escrow; already reserved payouts still recover. Disabling King cancels
+an existing event and queues any treasury refund on its next tick.
+
+### Competition persistence and verification
+
+`db/competition/V1__competitions.sql` has independent `competition_schema` tracking
+inside the existing ledger database. It creates contribution/claim/request/payout,
+event/participant/victory/scheduling tables, a unique live-event index, and normalized
+`bounties`/`king_statistics` views. It does not overwrite the Phase 1 schema/version
+or Phase 2's armor database. Unknown future competition schemas are rejected.
+
+`CompetitionTest` covers calculations/rankings, contribution/refund conservation,
+idempotency, competing claims, anti-farming, failed-credit isolation, restart
+recovery, capture contention/winner selection, Amsterdam DST scheduling,
+configuration validation, active event checkpoints/history and migrations.
+The Phase 3 CI artifact includes PolderCore.jar, all YAML files, full source and
+test reports. See BUILD-REPORT.txt for actual executed build and runtime results.

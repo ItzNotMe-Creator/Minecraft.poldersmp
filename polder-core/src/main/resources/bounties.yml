@@ -1,0 +1,15 @@
+enabled: true
+minimum: 1
+maximum: 1000000
+large-announcement: 10000
+anti-farming:
+  pair-cooldown-seconds: 86400
+  minimum-victim-play-seconds: 300
+  minimum-victim-life-seconds: 60
+  block-same-address: true
+admin-funding-account: ''
+gui:
+  enabled: true
+  title: 'PolderSMP • Bounties'
+sounds: true
+particles: true

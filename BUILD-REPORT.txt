@@ -200,5 +200,8 @@ Arena/capture positions require operator setup in a PvP-enabled world and must
 respect external protection rules. Keep event rules unchanged while a persisted
 competition is active, including during downtime. Disabled bounty modules retain
 escrow; earned payouts still recover. No worlds or private configuration deleted.
-CI execution status will be checked after pushing; no CI pass claimed in advance.
+GitHub Actions Phase 3 run 42478767773 completed successfully.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42478767773
+Core/Common compilation and all 36 tests passed; PolderCore-Phase3 and
+phase3-tests artifacts were uploaded. Paper probes were executed locally.
 No Phase 4 implementation.

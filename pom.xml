@@ -5,7 +5,7 @@
   <artifactId>polder-parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  
+
 
   <modules>
     <module>polder-common</module>
@@ -13,7 +13,7 @@
     <module>polder-lobby</module>
     <module>polder-velocity</module>
   </modules>
-  
+
 
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
@@ -21,7 +21,7 @@
     <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
     <velocity.version>3.4.0-SNAPSHOT</velocity.version>
   </properties>
-  
+
 
   <repositories>
     <repository>
@@ -29,7 +29,7 @@
       <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
   </repositories>
-  
+
 
   <dependencies>
     <dependency>
@@ -39,7 +39,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
 
   <build>
     <plugins>

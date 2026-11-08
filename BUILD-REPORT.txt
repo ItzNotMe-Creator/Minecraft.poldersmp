@@ -74,6 +74,10 @@ The isolated offline Paper test logged an external Mojang public-key fetch
 connection failure; it did not prevent plugin enable or local command checks.
 The first temporary Velocity config failed validation due to default forced-host
 entries; the test fixture was corrected and the proxy then started successfully.
-GitHub Actions execution status: not yet run; no CI success claimed.
+GitHub Actions run 42476345058: completed successfully.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42476345058
+All four modules compiled; automated tests passed; PolderSMP-Phase1 and
+test-results artifacts uploaded successfully. CI validates compilation/unit
+tests/packaging; live runtime smoke tests were executed locally.
 The eventual USB deployment ZIP and gameplay systems belong to later phases.
 No Phase 2 implemented. No changes to live worlds, secrets or player data.

@@ -6,6 +6,8 @@ import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PolderCore extends JavaPlugin implements TabExecutor {
+  private nl.poldersmp.core.gameplay.Weapons weapons;
+  private nl.poldersmp.core.gameplay.Armor armor;
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
@@ -25,6 +27,8 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
       getLogger().info("Foundation module disabled in configuration");
       return;
     }
+    weapons = new nl.poldersmp.core.gameplay.Weapons(this);
+    armor = new nl.poldersmp.core.gameplay.Armor(this);
     if (settings.databaseEnabled()) {
       database = new Database(getDataFolder().toPath().resolve("polder.db"));
       databaseState = "starting";
@@ -45,6 +49,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
 
   @Override
   public void onDisable() {
+    if (armor != null) armor.close();
     if (database != null) database.close();
   }
 

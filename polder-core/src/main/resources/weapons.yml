@@ -1,0 +1,34 @@
+enabled: true
+particles: true
+sounds: true
+acquisition:
+  admin-give: true
+weapons:
+  LIGHTNING_BLADE:
+    enabled: true
+    cooldown: 15
+    chance: 0.15
+    damage: 3
+    description: "15% chance on hit: controlled lightning and +3 damage."
+  SHADOW_DAGGER:
+    enabled: true
+    cooldown: 20
+    distance: 6
+    description: "Right-click: dash up to 6 blocks across safe ground."
+  TITAN_HAMMER:
+    enabled: true
+    cooldown: 30
+    radius: 4
+    damage: 6
+    description: "Right-click on ground: slam nearby enemies."
+  FROSTBITE_SWORD:
+    enabled: true
+    cooldown: 10
+    chance: 0.20
+    duration-ticks: 60
+    description: "20% chance on hit: Slowness II for 3 seconds."
+  SOUL_REAPER:
+    enabled: true
+    cooldown: 30
+    healing: 4
+    description: "Confirmed kill: restore 2 hearts, capped at maximum health."

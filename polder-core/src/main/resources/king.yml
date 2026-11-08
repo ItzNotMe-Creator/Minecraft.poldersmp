@@ -1,0 +1,34 @@
+enabled: true
+schedule:
+  timezone: Europe/Amsterdam
+  day: SATURDAY
+  time: '20:00'
+  catch-up-seconds: 300
+countdown-seconds: 60
+capture-radius: 7
+capture-seconds: 120
+maximum-duration-seconds: 1200
+minimum-participants: 2
+reset-when-contested: false
+arena:
+  world: ''
+  x: 0
+  y: 64
+  z: 0
+  radius: 64
+capture:
+  world: ''
+  x: 0
+  y: 64
+  z: 0
+rewards:
+  money: 0
+  treasury: ''
+title:
+  chat-prefix: true
+  text: '[👑 King] '
+gui:
+  enabled: true
+  title: 'PolderSMP • King of the SMP'
+sounds: true
+particles: true

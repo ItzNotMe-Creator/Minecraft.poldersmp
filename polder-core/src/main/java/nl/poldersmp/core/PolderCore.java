@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class PolderCore extends JavaPlugin implements TabExecutor {
   private nl.poldersmp.core.gameplay.Weapons weapons;
   private nl.poldersmp.core.gameplay.Armor armor;
+  private nl.poldersmp.core.competition.Competitions competitions;
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
@@ -37,6 +38,16 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
           .whenComplete(
               (v, e) -> {
                 databaseState = e == null ? "ready" : "failed";
+                if (e == null)
+                  getServer()
+                      .getScheduler()
+                      .runTask(
+                          this,
+                          () -> {
+                            if (isEnabled())
+                              competitions =
+                                  new nl.poldersmp.core.competition.Competitions(this, database);
+                          });
                 if (e != null) {
                   getLogger().severe("SQLite initialization failed: " + e);
                   getServer()
@@ -49,12 +60,19 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
 
   @Override
   public void onDisable() {
+    if (competitions != null) competitions.close();
     if (armor != null) armor.close();
     if (database != null) database.close();
   }
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    if (!command.getName().equals("poldercore")) {
+      sender.sendMessage(
+          "Competition service unavailable: database disabled, initializing, or invalid"
+              + " configuration.");
+      return true;
+    }
     String sub = args.length == 0 ? "info" : args[0].toLowerCase(Locale.ROOT);
     if (!List.of("info", "reload", "debug").contains(sub)) {
       sender.sendMessage("Usage: /poldercore <info|reload|debug>");

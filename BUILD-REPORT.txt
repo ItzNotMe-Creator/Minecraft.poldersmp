@@ -122,3 +122,88 @@ complete Phase 2. No Phase 3 work performed.
 
 Final Paper-only harness: exit 0; weaponadmin reload and armoradmin reload
 succeeded, registry/PDC probe passed, orderly shutdown.
+
+PHASE 3 — BOUNTIES AND KING OF THE SMP (2026-11-08)
+Branch: phase3/competitions; based on the existing phase2/gameplay review branch.
+Phase 1 and Phase 2 code retained. Phase 2's documented unfinished work remains
+unfinished; this phase does not silently replace it or advance to Phase 4.
+
+IMPLEMENTED
+- UUID bounty funding, additive multi-contributor escrow, ranked player-head
+  54-slot GUI, pagination, bounty/kill/contributor statistics, recent claim history,
+  large-threshold announcements, offline cached-name/UUID resolution.
+- Confirmed direct/projectile PlayerDeathEvent attribution, self/team/world PvP
+  checks, configurable minimum play/life times and same-address protection;
+  persistent symmetric pair cooldown and optional existing AbilityGuard veto.
+- Admin set/clear with funded increases and transactional original-contributor
+  refunds rather than free-money creation or deletion of owed balances.
+- Transactional Economy interface, default Phase 1 accounts implementation,
+  optional Bukkit service provider contract. No new currency or Vault mirroring.
+- Pending/completed payout reservations, deterministic source IDs, serialized
+  recovery, per-payment savepoints, retry metadata; failed credits do not block
+  other recipients. Restart/replay cannot double-credit the local ledger.
+- Saturday 20:00 Europe/Amsterdam scheduling (DST-aware), persisted unique weekly
+  slots, bounded late-start window, manual start/end, countdown/boss bar,
+  configurable arena/objective, 120s uncontested capture with radius 7, maximum
+  20 minutes and minimum 2 participants. Configuration matches requested defaults.
+- Persistent active event, deadline, candidate, progress, participants, current
+  King, past victories/statistics and next schedule. No offline capture progress.
+- Single-winner reward reservation, treasury-funded optional cash, cancellation
+  refunds, separate current-King permission and chat-prefix wrapper. No staff
+  group/rank mutation; compatible with LuckPerms through a separate permission.
+- King information GUI, standings/history/status, arena position/reload commands,
+  permissions/tab completion; bounties.yml, king.yml and messages additions.
+- Namespaced versioned competition migration in the existing polder.db. No
+  changes to the Foundation migration/version or armor.db. Normalized bounty
+  and King statistics views avoid redundant balance aggregates.
+- Dedicated Phase 3 Core/source/configuration/test-report artifact workflow.
+
+EXECUTED VERIFICATION
+Maven reactor clean verify: BUILD SUCCESS (parent/Common/Core/Lobby/Velocity).
+37 automated tests: 11 Phase 1 + 7 Phase 2 + 19 competition tests;
+0 failures, 0 errors, 0 skipped. A contribution SQL placeholder mismatch was
+caught by the initial tests and fixed before successful verification.
+Competition tests cover escrow calculations, rankings/contributor counts,
+conservation under refunds, request/claim/payout idempotency, competing claims,
+anti-farming/self/team rules, restart recovery, isolated failed credits,
+contested capture and candidate changes, winner selection, Amsterdam winter/
+summer/DST scheduling, active event/schedule persistence, one-time King rewards,
+cancellation refunds, nonparticipant rejection, config validation and migrations.
+
+Real Paper 1.21.11 build 132, Temurin Java 21.0.13+9:
+- Core and existing Lobby enabled; Foundation and competition services ready.
+- CompetitionProbe passed: four command executors, both config files, Foundation
+  schema v1 and competition schema v1 in the same existing database.
+- Existing Phase 2 GameplayProbe still passed all 18 trim patterns and five
+  persistent item identities with serialization round trips.
+- king status/reload/current, offline-UUID bounty info and zero-value admin clear
+  completed. king start safely refused an unconfigured arena.
+- Next default event displayed 2026-11-14 20:00 Europe/Amsterdam.
+- Paper-only smoke harness exited 0 with orderly shutdown.
+Probe sources under src/integration/java are test-only, manually compiled against
+resolved Paper/Core classes and run on the isolated temporary server; they are
+not included in the production plugin JAR. The external Mojang public-key fetch
+warning persists in this offline test environment and did not prevent checks.
+
+LIMITS / OPERATOR SETUP
+No live multi-client PvP, GUI clicking, third-party chat/claims/LuckPerms matrix,
+or long-running load test was performed. Those are deployment validation limits,
+not successful tests claimed here. The scoreboard and existing AbilityGuard
+interfaces provide currently available team/protection data; a separate clan
+plugin would need to expose those relationships through an integration.
+Cash bounties require existing funded Phase 1 accounts. King defaults to title/
+statistics with zero minted cash; optional money prizes require a funded treasury
+UUID. A conventional Vault adapter is intentionally not invented: its ordinary
+non-idempotent API cannot meet the local atomic payout contract. The implemented
+existing-economy path satisfies the Phase 1/Phase 7 fallback without another coin.
+Arena/capture positions require operator setup in a PvP-enabled world and must
+respect external protection rules. Keep event rules unchanged while a persisted
+competition is active, including during downtime. Disabled bounty modules retain
+escrow; earned payouts still recover. No worlds or private configuration deleted.
+GitHub Actions Phase 3 run 42478767773 completed successfully.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42478767773
+Core/Common compilation and all 36 tests passed on the initial revision; PolderCore-Phase3 and
+phase3-tests artifacts were uploaded. Paper probes were executed locally.
+A further regression test verifies that a batch of 100 failing payouts cannot
+starve newer recipients; retry ordering prioritizes less-attempted payments.
+No Phase 4 implementation.

@@ -304,3 +304,79 @@ GitHub Actions Phase 4 run 42482589159: completed successfully.
 https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42482589159
 All 56 tests passed; PolderCore-Phase4 and phase4-tests artifacts uploaded.
 The live Paper/client checks were executed locally, not invented as CI tests.
+
+PHASE 5 - RANDOM WORLD EVENTS (2026-11-08)
+Branch: phase5/world-events; preserves preceding phase branches; no Phase 6.
+Runtime targets unchanged: Paper 1.21.11, Java 21; no new dependencies.
+
+COMPLETED
+- Separate MeteorEvent, SupplyDropEvent, BossEvent, PirateShipEvent, DungeonEvent
+  implementations coordinated by a persistent EventManager within PolderCore.
+- Weighted automatic interval scheduling, saved next attempt/timezone, warnings,
+  coordinates, boss/progress bars, expiration, admin start/stop/reload, completion,
+  player permissions/exemption and event participant leaderboard.
+- Visual-only meteor/drop, sealed contested barrels, two-chest ocean ship,
+  air-only dungeon ruins/waves/trap/final boss; configurable effects and rewards.
+- Bounded async safe searches reuse Phase 4 border/natural terrain/claim guards,
+  held chunk tickets, explicit world allowlist and conservative ocean checks.
+- Versioned events schema, one live event, actor UUIDs, health/damage checkpoints,
+  frozen settings, pre-placement manifests, per-chest claim CAS, conditional
+  restoration, ship persistence setting and restart/expiry recovery.
+- Idempotent persistent reward outbox to the existing canonical item/key mailbox;
+  resources, weapons and armor use Phase 4 tables. Optional cash uses reserved
+  existing-economy treasury funds with refunds; zero cash by default. No currency
+  replacement or item factory duplication. Statistics persist per UUID.
+- events.yml, messages, command descriptors, test/client fixtures, Phase 5 CI.
+
+EXECUTED LOCAL MAVEN
+Full parent/Common/Core/Lobby/Velocity clean verify: BUILD SUCCESS.
+76 automated tests, zero failures/errors/skips: previous 56 plus 20 event tests.
+Tests cover configuration/defaults, exact weighted selection, interval schedule,
+unique live event, lifecycle CAS, single/ship claims, expired claims, actor death
+versus retirement, health/damage persistence, winner/participant selection,
+cleanup manifests, schema version rejection, saved scheduling, treasury budgets,
+refunds/insufficient funds/savepoint isolation, idempotent rewards and mailbox
+source replay. Only PolderCore and narrow Phase 4 reuse surfaces changed.
+Official dependency access succeeded using verified TLS/proxy configuration;
+no insecure repository or certificate workaround was introduced.
+
+EXECUTED PAPER / REAL CLIENT
+Paper 1.21.11 build 132, Temurin 21.0.13+9, Mineflayer 4.39.0, isolated localhost.
+ALL WORLD EVENT CLIENT CHECKS PASS (client exit 0): all five event types spawned
+through normal safe placement, meteor/drop claimed, boss killed, both ship chests
+claimed, two dungeon waves and final boss killed then treasure claimed. Every
+fixture audit verified delivered frozen payloads, one physical receipt per award
+and restoration of each temporary manifest block. Boss bars were observed.
+Graceful shutdown/restart test: boss persisted at 2.669090747833252 health with
+7.330909252166748 attributed damage. Same event and actor UUID resumed; the real
+client finished combat. Final health 0, damage 10, actor dead=1, one ITEM and one
+KEY award DONE. Receipt/restoration audit and BOSS RESTART CLIENT PASS succeeded.
+Test worlds retained; no worlds or private configuration were deleted. Earlier
+plugin startup probes still loaded. Fixture sources/selected evidence are in
+src/integration and are excluded from production builds.
+
+ERRORS FOUND / LIMITS
+An initial client fixture filtered entities as type mob; current protocol labels
+hostiles differently. Correcting the fixture's supported-mob name filter allowed
+all five cases to complete. That preliminary run is not represented as passing.
+Final polish persists boss zero health/death atomically, retires removed actors,
+waits for chunk entities on recovery, removes tracked actors and protects event
+blocks from fire. Final reactor verification includes these changes.
+World allowlist is empty by default. Known claim plugins require a VaultProtection
+provider; no bundled third-party adapter is invented. Conservative wilderness
+checks can reject all attempts. Artificial/editor builds need properly designated
+wilderness and protection metadata. Ship persistence is configurable; dungeon
+structures do not excavate terrain. Boss mob types are deliberately whitelisted.
+No forced power-cut, external inventory synchronizer, third-party plugin matrix
+or prolonged load test was executed. Special attacks are normal cancellable
+server damage; region adapters must approve placement/claims. Cash reward tests
+are transactional automated tests; live defaults used zero cash. Phase 2's
+previously documented unfinished work is not silently claimed complete here.
+
+ACTUAL GITHUB ACTIONS RESULT
+Phase 5 run 42486845510 completed successfully on commit 461776a.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42486845510
+Job 128750467516: BUILD SUCCESS, 11 Common + 65 Core tests, no failures/errors/skips.
+PolderCore-Phase5 and phase5-tests artifacts uploaded successfully. This CI ran
+Maven/tests; the real Paper/client/restart checks described above ran locally.
+Review PR: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/4

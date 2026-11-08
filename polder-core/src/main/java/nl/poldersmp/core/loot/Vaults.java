@@ -248,6 +248,10 @@ final class Vaults implements AutoCloseable {
           Material.COPPER_ORE);
 
   private boolean eligible(World world, int x, int y, int z) {
+    return eligible(world, x, y, z, false);
+  }
+
+  private boolean eligible(World world, int x, int y, int z, boolean ocean) {
     for (int dx = -1; dx <= 1; dx++)
       for (int dz = -1; dz <= 1; dz++)
         if (!world.isChunkLoaded((x >> 4) + dx, (z >> 4) + dz)) return false;
@@ -274,15 +278,20 @@ final class Vaults implements AutoCloseable {
         players = false;
     for (int dx = -1; dx <= 1; dx++)
       for (int dz = -1; dz <= 1; dz++) {
-        terrain &= GROUND.contains(world.getBlockAt(x + dx, y - 1, z + dz).getType());
+        terrain &=
+            ocean
+                ? world.getBlockAt(x + dx, y - 1, z + dz).getType() == Material.WATER
+                : GROUND.contains(world.getBlockAt(x + dx, y - 1, z + dz).getType());
         for (int dy = 0; dy <= 2; dy++)
           air &= world.getBlockAt(x + dx, y + dy, z + dz).getType().isAir();
       }
     for (int dx = -8; dx <= 8; dx++)
       for (int dz = -8; dz <= 8; dz++)
         for (int dy = -3; dy <= 8; dy++)
-          if (!NATURAL.contains(world.getBlockAt(x + dx, y + dy, z + dz).getType()))
+          if (!(ocean && world.getBlockAt(x + dx, y + dy, z + dz).getType() == Material.WATER)
+              && !NATURAL.contains(world.getBlockAt(x + dx, y + dy, z + dz).getType()))
             terrain = false;
+    if (ocean && !world.getBiome(x, y, z).getKey().getKey().contains("ocean")) return false;
     return new LootRules.Eligibility(
             true,
             border,
@@ -678,6 +687,94 @@ final class Vaults implements AutoCloseable {
       loot.reload();
       sender.sendMessage("Loot settings reloaded.");
     } else sender.sendMessage("/vaultadmin spawn <rarity> | remove | reload");
+  }
+
+  CompletableFuture<Void> loadArea(Location location) {
+    return load(location.getWorld(), location.getBlockX(), location.getBlockZ());
+  }
+
+  boolean approveArea(Location location) {
+    return wilderness(
+        location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+  }
+
+  private record Held(World world, int x, int z) {}
+
+  private final Map<UUID, List<Held>> heldAreas = new HashMap<>();
+
+  void holdArea(UUID owner, Location location) {
+    if (heldAreas.containsKey(owner)) return;
+    List<Held> held = new ArrayList<>();
+    World world = location.getWorld();
+    for (int dx = -1; dx <= 1; dx++)
+      for (int dz = -1; dz <= 1; dz++) {
+        int x = (location.getBlockX() >> 4) + dx, z = (location.getBlockZ() >> 4) + dz;
+        world.addPluginChunkTicket(x, z, loot.plugin);
+        tickets.merge(world.getUID() + ":" + x + ":" + z, 1, Integer::sum);
+        held.add(new Held(world, x, z));
+      }
+    heldAreas.put(owner, held);
+  }
+
+  void releaseArea(UUID owner) {
+    var held = heldAreas.remove(owner);
+    if (held == null) return;
+    for (var h : held) {
+      String key = h.world().getUID() + ":" + h.x() + ":" + h.z();
+      Integer count = tickets.get(key);
+      if (count != null && count <= 1) {
+        tickets.remove(key);
+        h.world().removePluginChunkTicket(h.x(), h.z(), loot.plugin);
+      } else if (count != null) tickets.put(key, count - 1);
+    }
+  }
+
+  CompletableFuture<Location> findSite(
+      List<World> worlds, int minimum, int maximum, int attempts, boolean ocean) {
+    var future = new CompletableFuture<Location>();
+    find(worlds, minimum, maximum, attempts, ocean, future);
+    return future;
+  }
+
+  private void find(
+      List<World> worlds,
+      int minimum,
+      int maximum,
+      int remaining,
+      boolean ocean,
+      CompletableFuture<Location> result) {
+    if (closed || remaining <= 0 || worlds.isEmpty() || !guardsAvailable()) {
+      result.completeExceptionally(new IllegalStateException("No approved wilderness site found"));
+      return;
+    }
+    World world = worlds.get(ThreadLocalRandom.current().nextInt(worlds.size()));
+    double angle = ThreadLocalRandom.current().nextDouble(Math.PI * 2),
+        distance = ThreadLocalRandom.current().nextDouble(minimum, maximum + 1.0);
+    int x = ((int) (world.getSpawnLocation().getX() + Math.cos(angle) * distance) >> 4) * 16 + 8,
+        z = ((int) (world.getSpawnLocation().getZ() + Math.sin(angle) * distance) >> 4) * 16 + 8;
+    if (!world.getWorldBorder().isInside(new Location(world, x, world.getSeaLevel(), z))) {
+      find(worlds, minimum, maximum, remaining - 1, ocean, result);
+      return;
+    }
+    load(world, x, z)
+        .whenComplete(
+            (v, error) ->
+                loot.main(
+                    () -> {
+                      if (error != null || !loaded(world, x, z)) {
+                        find(worlds, minimum, maximum, remaining - 1, ocean, result);
+                        return;
+                      }
+                      int y =
+                          world.getHighestBlockYAt(x, z, HeightMap.MOTION_BLOCKING_NO_LEAVES) + 1;
+                      if (y < world.getMinHeight() + 4
+                          || y + 10 >= world.getMaxHeight()
+                          || !eligible(world, x, y, z, ocean)) {
+                        find(worlds, minimum, maximum, remaining - 1, ocean, result);
+                        return;
+                      }
+                      result.complete(new Location(world, x, y, z));
+                    }));
   }
 
   @Override

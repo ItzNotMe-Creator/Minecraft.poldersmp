@@ -38,6 +38,10 @@ commands:
     description: Secret vault statistics
   vaultadmin:
     description: Spawn, clean up or configure secret vaults
+  events:
+    description: Automatic world events and statistics
+  eventadmin:
+    description: Start, stop or reload world events
 permissions:
   poldercore.info:
     default: op
@@ -81,3 +85,11 @@ permissions:
     default: true
   polder.vaults.admin:
     default: op
+  polder.events.view:
+    default: true
+  polder.events.play:
+    default: true
+  polder.events.admin:
+    default: op
+  polder.events.exempt:
+    default: false

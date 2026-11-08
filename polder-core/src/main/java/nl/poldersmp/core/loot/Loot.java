@@ -210,6 +210,42 @@ public final class Loot implements Listener, TabExecutor, AutoCloseable {
     return store.issue(id, tier, parcel(owner, key(id, tier), now), source, now);
   }
 
+  /** Event integrations prepare frozen payloads on the Paper thread, then persist their outbox. */
+  public LootStore.Parcel prepareReward(UUID owner, LootRules.Tier tier) {
+    return reward(owner, select(tier, false), System.currentTimeMillis());
+  }
+
+  public CompletableFuture<Boolean> enqueuePrepared(LootStore.Parcel reward, String source) {
+    return store.enqueue(reward, source, System.currentTimeMillis());
+  }
+
+  public CompletableFuture<Location> findEventSite(
+      List<World> worlds, int minimum, int maximum, int attempts, boolean ocean) {
+    if (!ready || vaults == null)
+      return CompletableFuture.failedFuture(
+          new IllegalStateException("Wilderness service is initializing"));
+    return vaults.findSite(worlds, minimum, maximum, attempts, ocean);
+  }
+
+  public CompletableFuture<Void> loadEventArea(Location location) {
+    if (vaults == null)
+      return CompletableFuture.failedFuture(
+          new IllegalStateException("Wilderness service is initializing"));
+    return vaults.loadArea(location);
+  }
+
+  public boolean eventWilderness(Location location) {
+    return vaults != null && vaults.approveArea(location);
+  }
+
+  public void holdEventArea(UUID owner, Location location) {
+    vaults.holdArea(owner, location);
+  }
+
+  public void releaseEventArea(UUID owner) {
+    if (vaults != null) vaults.releaseArea(owner);
+  }
+
   private void tick() {
     if (!ready) return;
     for (Player player : Bukkit.getOnlinePlayers()) hasLockedInventory(player);

@@ -102,6 +102,16 @@ public final class LootStore {
         });
   }
 
+  public CompletableFuture<Boolean> enqueue(Parcel reward, String source, long now) {
+    return tx(
+        c -> {
+          if (count(c, "SELECT COUNT(*) FROM loot_parcels WHERE source=?", source) > 0)
+            return false;
+          parcel(c, reward, source, now);
+          return true;
+        });
+  }
+
   public CompletableFuture<Boolean> open(
       UUID key, LootRules.Tier tier, Parcel reward, String label, long now) {
     return tx(

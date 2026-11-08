@@ -1,0 +1,11 @@
+name: EventsLiveProbe
+version: 1.0
+main: nl.poldersmp.core.events.EventsLiveProbe
+api-version: '1.21.11'
+depend: [PolderCore]
+commands:
+  eventsprobe:
+    permission: eventsprobe.admin
+permissions:
+  eventsprobe.admin:
+    default: op

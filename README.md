@@ -308,3 +308,142 @@ recovery, capture contention/winner selection, Amsterdam DST scheduling,
 configuration validation, active event checkpoints/history and migrations.
 The Phase 3 CI artifact includes PolderCore.jar, all YAML files, full source and
 test reports. See BUILD-REPORT.txt for actual executed build and runtime results.
+
+## Phase 4 — Crates and secret vaults
+
+`phase4/loot` continues Phase 3 and adds only Core loot code plus its configuration,
+tests and artifact workflow. The Phase 2 review limitations remain recorded;
+this phase neither replaces older systems nor implements Phase 5.
+
+### Crates, keys and reward tables
+
+All five tiers are configured in `crates.yml`: COMMON, RARE, EPIC, LEGENDARY,
+MYTHIC. Each has a nonempty positive integer weighted table. Common includes
+resources, diamonds, food and experience bottles; Rare includes enchanted gear
+and valuables; Epic includes netherite, armor and collectibles; Legendary/Mythic
+include canonical weapons, trimmed equipment and exclusive collectibles.
+Experience is delivered as usable bottles so it follows the same recoverable
+physical-item protocol as other rewards. Armor uses the vanilla trim API;
+weapons call the existing `Weapons.create(Kind)` factory with the same type/serial
+identity and ability configuration, never a copied lookalike implementation.
+
+Commands:
+
+- `/crates` opens the 54-slot tier menu, then a 54-slot weighted reward preview.
+- `/crates keys` shows physical keys and requests mailbox delivery.
+- `/crates top` shows persistent opening statistics.
+- `/crateadmin set <type>` registers the empty single chest/barrel you look at.
+- `/crateadmin remove` unregisters that crate without deleting its block.
+- `/crateadmin givekey <online-player> <type> <amount>` queues 1–64 physical keys.
+- `/crateadmin reload` validates/reloads both loot configurations.
+
+`polder.crates.use` defaults true, `polder.crates.admin` defaults op. Registered
+crates are protected from ordinary breaking, explosions, pistons and hopper
+transfers; remove their registration before moving them. Keyless/mismatched-key
+interactions show the preview. A matching registered key is consumed once, the
+reward is selected and persisted once, and the 60-tick animation displays that
+already selected outcome. Preview and animation inventories reject extraction.
+Sounds, particles, rare announcements, weights and animation time are configurable.
+
+Each key has PDC tier and UUID fields **and an issued record in SQLite**. A PDC
+lookalike without a record is invalid. Redemption atomically transitions ISSUED
+to USED and reserves the selected reward. Copying an item cannot create another
+redeemable key; all copies share that spent record. Keys are single items rather
+than stacks of interchangeable UUIDs. Statistics count committed openings, even
+if the player disconnects before the cosmetic animation finishes.
+
+### Delivery and interruption recovery
+
+All rewards, including granted keys, enter a durable UUID-owned mailbox. A full
+inventory defers delivery; nothing is thrown on the ground, discarded or rerolled.
+One free storage slot is required because each delivery has its own receipt tag.
+Mailbox delivery runs automatically while online and resumes after reconnect or
+restart. Registered source IDs also make external `Loot.grantKey` integrations
+idempotent; call this API on the Paper server thread (the returned future tracks
+the asynchronous database commit), and use the same stable source ID when retrying the same earned reward.
+
+The state machine is WAITING → DELIVERING → DELIVERED. The payload and unique
+receipt are saved before touching inventory. During DELIVERING, receipt-tagged
+items are locked against ordinary moving, dropping, consuming and use; a death
+retains provisional items. Inventory insertion and Paper's player save occur on
+the server thread, then the database confirms completion and unlocks the item.
+On recovery, an existing receipt in the owner's inventory is confirmed instead
+of inserted again. A missing provisional item is inserted from the persisted
+payload. Completed receipts are never issued again if their item was used or
+traded. Old completed receipts are prevalidated after login/restart.
+
+SQL uses the existing async Foundation manager. This protocol assumes Paper owns
+its player inventory persistence; an external cross-server inventory synchronizer
+must preserve receipts and save ordering and requires its own integration. Do
+not strip receipt PDC or restore the economy database independently of player
+and world backups. There is no new currency or direct unrecoverable XP grant.
+
+### Secret vaults
+
+`vaults.yml` has its own enabled flag, five rarity weights and independent custom
+loot tables. Defaults: a spawn attempt every 30 minutes, 30-minute expiration,
+one-hour per-player discovery cooldown, at most three active vaults. Spawn and
+claim effects are configurable. The trap applies short Slowness/Blindness only
+when no corresponding effect already exists; it causes no explosion, terrain
+fire or direct damage that could bypass region PvP rules.
+
+**Set `worlds: [your-overworld-name]` explicitly** before enabling placement.
+An empty allowlist spawns nothing. `/vaultadmin spawn <rarity>` uses the same
+random safety checks as scheduled spawning; it cannot force unsafe placement.
+`/vaultadmin remove` conditionally cleans the nearest vault within 16 blocks.
+`/vaultadmin reload` reloads loot settings. `/vaults` displays active/restoring
+counts and the persistent discovery leaderboard. `polder.vaults.use` defaults
+true; `polder.vaults.admin` defaults op.
+
+Candidate selection is intentionally conservative:
+
+- Overworld only, with the entire clearance buffer inside the world border.
+- Nine surrounding chunks must be uninhabited, contain no generated structures
+  and contain no tile entities/containers. Players must be at least 128 blocks away.
+- Natural, level, supported ground plus a conservative natural-material buffer;
+  the entire structure footprint must be air. Existing blocks are never replaced.
+- Chunks load/generate asynchronously using Paper APIs, with temporary tickets.
+  Set `allow-new-chunks: false` to restrict candidates to existing terrain.
+- A registered Bukkit `VaultProtection` provider must approve the complete buffer.
+  If a protection plugin named in `protection-plugins` is enabled without a
+  provider, placement fails closed. Adapters also control claiming. Add custom
+  claim-plugin names to that list and install a compatible provider before use.
+
+Visited wilderness and many natural structures are rejected on purpose. A server
+can report that no eligible position was found; it does not weaken its checks.
+Normal player bases are excluded through inhabited chunks, region checks and
+crafted-material/container checks. Artificial maps or builds made entirely via
+external editors without habitation metadata require an approving region adapter
+and a carefully designated world; block appearance alone cannot identify every
+possible unclaimed build.
+
+Each tier has a distinct small stone/rarity-accent structure and a sealed barrel
+objective. The PLANNED row and original/placed block-data manifest commit before
+construction. ACTIVE → CLAIMED is a transactional, single-global-claim transition
+which also reserves the loot and records the player cooldown/statistic. An expired,
+removed or already-claimed vault cannot grant again. Discovery is announced only
+after a successful claim. Neither the physical barrel nor its blocks contain
+free extractable reward inventory.
+
+Cleanup first reserves CLEANUP in SQLite to stop claim races, then restores only
+blocks still matching the manifest. Modified blocks and nonempty containers are
+preserved. The manifest is retained for audit even after REMOVED. Startup rolls
+back incomplete plans, cleans interrupted claims/cleanup and retires incomplete
+or expired structures. Unavailable worlds retain their restoration metadata.
+A shutdown leaves valid active vaults persistent instead of deleting worlds.
+
+### Earlier-phase reward integration
+
+A newly installed loot schema records its installation timestamp. Completed
+bounty payouts earned after that timestamp grant one configured key (COMMON by
+default). King victories grant one configured key (LEGENDARY by default), including
+when the King cash reward is zero. Cash-backed victories wait for the existing
+payout to complete. Stable payout/event source IDs prevent duplicate key grants;
+existing historical wins/payouts are not retroactively multiplied. Canonical weapon
+and vanilla trimmed-armor rewards work with the existing Phase 2 systems.
+
+All tables are in the existing `polder.db`, behind an independent versioned
+`db/loot/V1__loot.sql` migration and `loot_schema`. Foundation, competition and
+armor schemas/data are preserved. The Phase 4 CI artifact contains PolderCore.jar,
+YAML defaults, full source and test reports. See BUILD-REPORT.txt for executed
+unit, persistence, real-client and restart checks.

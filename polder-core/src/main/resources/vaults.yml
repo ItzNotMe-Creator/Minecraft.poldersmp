@@ -1,0 +1,163 @@
+enabled: true
+worlds: []
+spawn-interval-seconds: 1800
+expiration-seconds: 1800
+claim-cooldown-seconds: 3600
+maximum-active: 3
+spawn-min-radius: 512
+spawn-max-radius: 5000
+attempts: 8
+allow-new-chunks: true
+protection-plugins: [WorldGuard, GriefPrevention, Towny, Lands, Residence, GriefDefender, PlotSquared, Factions]
+trap: true
+sounds: true
+particles: true
+rarity-weights: {COMMON: 60, RARE: 25, EPIC: 10, LEGENDARY: 4, MYTHIC: 1}
+rarities:
+  COMMON:
+    rewards:
+      - id: iron
+        kind: ITEM
+        value: IRON_INGOT
+        amount: 16
+        weight: 40
+        announce: false
+      - id: diamonds
+        kind: ITEM
+        value: DIAMOND
+        amount: 3
+        weight: 15
+        announce: false
+      - id: food
+        kind: ITEM
+        value: COOKED_BEEF
+        amount: 32
+        weight: 30
+        announce: false
+      - id: experience
+        kind: ITEM
+        value: EXPERIENCE_BOTTLE
+        amount: 16
+        weight: 15
+        announce: false
+  RARE:
+    rewards:
+      - id: emeralds
+        kind: ITEM
+        value: EMERALD
+        amount: 12
+        weight: 40
+        announce: false
+      - id: diamond-sword
+        kind: ITEM
+        value: DIAMOND_SWORD
+        amount: 1
+        weight: 25
+        announce: false
+        enchants: {sharpness: 3, unbreaking: 2}
+      - id: diamond-chestplate
+        kind: ITEM
+        value: DIAMOND_CHESTPLATE
+        amount: 1
+        weight: 20
+        announce: false
+        enchants: {protection: 4, unbreaking: 3}
+      - id: gold
+        kind: ITEM
+        value: GOLD_INGOT
+        amount: 32
+        weight: 15
+        announce: false
+  EPIC:
+    rewards:
+      - id: netherite
+        kind: ITEM
+        value: NETHERITE_INGOT
+        amount: 2
+        weight: 25
+        announce: true
+      - id: ancient-debris
+        kind: ITEM
+        value: ANCIENT_DEBRIS
+        amount: 4
+        weight: 35
+        announce: false
+      - id: epic-armor
+        kind: TRIM
+        value: ward
+        amount: 1
+        weight: 25
+        announce: false
+        enchants: {protection: 4, unbreaking: 3}
+      - id: amethyst-token
+        kind: COSMETIC
+        value: AMETHYST_SHARD
+        amount: 1
+        weight: 15
+        announce: true
+  LEGENDARY:
+    rewards:
+      - id: lightning-blade
+        kind: WEAPON
+        value: LIGHTNING_BLADE
+        amount: 1
+        weight: 20
+        announce: true
+      - id: shadow-dagger
+        kind: WEAPON
+        value: SHADOW_DAGGER
+        amount: 1
+        weight: 20
+        announce: true
+      - id: titan-hammer
+        kind: WEAPON
+        value: TITAN_HAMMER
+        amount: 1
+        weight: 20
+        announce: true
+      - id: frostbite
+        kind: WEAPON
+        value: FROSTBITE_SWORD
+        amount: 1
+        weight: 20
+        announce: true
+      - id: legendary-armor
+        kind: TRIM
+        value: silence
+        amount: 1
+        weight: 20
+        announce: true
+        enchants: {protection: 4, unbreaking: 3}
+  MYTHIC:
+    rewards:
+      - id: soul-reaper
+        kind: WEAPON
+        value: SOUL_REAPER
+        amount: 1
+        weight: 25
+        announce: true
+      - id: mythic-blade
+        kind: WEAPON
+        value: LIGHTNING_BLADE
+        amount: 1
+        weight: 20
+        announce: true
+      - id: mythic-armor
+        kind: TRIM
+        value: silence
+        amount: 1
+        weight: 35
+        announce: true
+        enchants: {protection: 4, unbreaking: 3}
+      - id: founders-star
+        kind: COSMETIC
+        value: NETHER_STAR
+        amount: 1
+        weight: 10
+        announce: true
+      - id: dragon-collectible
+        kind: COSMETIC
+        value: DRAGON_BREATH
+        amount: 1
+        weight: 10
+        announce: true

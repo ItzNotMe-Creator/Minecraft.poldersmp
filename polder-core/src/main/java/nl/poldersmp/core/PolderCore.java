@@ -9,6 +9,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
   private nl.poldersmp.core.gameplay.Weapons weapons;
   private nl.poldersmp.core.gameplay.Armor armor;
   private nl.poldersmp.core.competition.Competitions competitions;
+  private nl.poldersmp.core.loot.Loot loot;
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
@@ -44,9 +45,19 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
                       .runTask(
                           this,
                           () -> {
-                            if (isEnabled())
-                              competitions =
-                                  new nl.poldersmp.core.competition.Competitions(this, database);
+                            if (isEnabled()) {
+                              try {
+                                competitions =
+                                    new nl.poldersmp.core.competition.Competitions(this, database);
+                              } catch (RuntimeException error) {
+                                getLogger().severe("Competition startup failed: " + error);
+                              }
+                              try {
+                                loot = new nl.poldersmp.core.loot.Loot(this, database, weapons);
+                              } catch (RuntimeException error) {
+                                getLogger().severe("Loot startup failed: " + error);
+                              }
+                            }
                           });
                 if (e != null) {
                   getLogger().severe("SQLite initialization failed: " + e);
@@ -60,6 +71,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
 
   @Override
   public void onDisable() {
+    if (loot != null) loot.close();
     if (competitions != null) competitions.close();
     if (armor != null) armor.close();
     if (database != null) database.close();
@@ -69,7 +81,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (!command.getName().equals("poldercore")) {
       sender.sendMessage(
-          "Competition service unavailable: database disabled, initializing, or invalid"
+          "Gameplay service unavailable: database disabled, initializing, or invalid"
               + " configuration.");
       return true;
     }

@@ -160,7 +160,7 @@ IMPLEMENTED
 
 EXECUTED VERIFICATION
 Maven reactor clean verify: BUILD SUCCESS (parent/Common/Core/Lobby/Velocity).
-36 automated tests: 11 Phase 1 + 7 Phase 2 + 18 competition tests;
+37 automated tests: 11 Phase 1 + 7 Phase 2 + 19 competition tests;
 0 failures, 0 errors, 0 skipped. A contribution SQL placeholder mismatch was
 caught by the initial tests and fixed before successful verification.
 Competition tests cover escrow calculations, rankings/contributor counts,
@@ -202,6 +202,8 @@ competition is active, including during downtime. Disabled bounty modules retain
 escrow; earned payouts still recover. No worlds or private configuration deleted.
 GitHub Actions Phase 3 run 42478767773 completed successfully.
 https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42478767773
-Core/Common compilation and all 36 tests passed; PolderCore-Phase3 and
+Core/Common compilation and all 36 tests passed on the initial revision; PolderCore-Phase3 and
 phase3-tests artifacts were uploaded. Paper probes were executed locally.
+A further regression test verifies that a batch of 100 failing payouts cannot
+starve newer recipients; retry ordering prioritizes less-attempted payments.
 No Phase 4 implementation.

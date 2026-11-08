@@ -254,7 +254,7 @@ public final class CompetitionStore {
               var rs =
                   s.executeQuery(
                       "SELECT id,recipient,amount FROM competition_payouts WHERE status='PENDING'"
-                          + " ORDER BY created LIMIT 100")) {
+                          + " ORDER BY attempts,created,id LIMIT 100")) {
             while (rs.next())
               payments.add(
                   new Payment(rs.getString(1), UUID.fromString(rs.getString(2)), rs.getLong(3)));

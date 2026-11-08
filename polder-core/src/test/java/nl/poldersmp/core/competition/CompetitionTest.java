@@ -342,4 +342,30 @@ class CompetitionTest {
     assertEquals(100, board.getFirst().amount());
     assertEquals(2, board.getLast().rank());
   }
+
+  @Test
+  void failedPaymentBatchDoesNotStarveNewRecipients() {
+    UUID blocked = seed(Long.MAX_VALUE), recipient = UUID.randomUUID();
+    db.submit(
+            c -> {
+              try (var p =
+                  c.prepareStatement(
+                      "INSERT INTO competition_payouts(id,recipient,amount,source,status,created)"
+                          + " VALUES(?,?,1,'TEST','PENDING',?)")) {
+                for (int n = 0; n < 101; n++) {
+                  p.setString(1, "queue-" + n);
+                  p.setString(2, (n == 100 ? recipient : blocked).toString());
+                  p.setInt(3, n);
+                  p.addBatch();
+                }
+                p.executeBatch();
+              }
+              return null;
+            })
+        .join();
+    assertEquals(0, store.recoverPayouts(200).join());
+    assertEquals(1, store.recoverPayouts(300).join());
+    assertEquals(1, balance(recipient));
+    assertEquals(100, store.pending().join());
+  }
 }

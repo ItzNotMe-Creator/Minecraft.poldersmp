@@ -207,3 +207,100 @@ phase3-tests artifacts were uploaded. Paper probes were executed locally.
 A further regression test verifies that a batch of 100 failing payouts cannot
 starve newer recipients; retry ordering prioritizes less-attempted payments.
 No Phase 4 implementation.
+
+PHASE 4 — CRATES AND SECRET VAULTS (2026-11-08)
+Branch: phase4/loot, based on phase3/competitions. Core-only gameplay additions;
+Common/Lobby/Velocity implementations and dependencies preserved. The existing
+Phase 2 review limitations remain recorded. No Phase 5 implemented.
+
+IMPLEMENTED
+- Five complete crate tiers and independent five-tier vault loot tables:
+  resources, food/XP bottles, enchanted equipment, netherite, canonical legendary
+  weapons, vanilla trimmed armor, PDC collectible cosmetics.
+- Existing weapon factory exposed through create(Kind) and reused; no alternate
+  weapon identities or incompatible lookalike items. New lore reflects reward
+  acquisition while item type/serial and abilities remain compatible.
+- Placeable persistent chest/barrel crate registrations, registered UUID physical
+  keys, atomic one-time redemption, guaranteed weighted selection persisted before
+  cosmetic opening, read-only 54-slot previews/animation, effects, announcements,
+  statistics, permissions, completion and administrative controls.
+- Durable WAITING/DELIVERING/DELIVERED mailbox, owner/receipt PDC, inventory save
+  before completion, provisional-item locks, full-inventory deferral, death-safe
+  provisional items and restart/reconnect reconciliation. Completed items are
+  never reissued merely because they were used, moved or traded.
+- Configurable random vault spawning, rarity structures, nondestructive status
+  traps, global one-claim transitions, persistent player cooldown/statistics,
+  discovery notices, expiration and conditional restoration.
+- Explicit world allowlist; async chunk loads; temporary tickets; border,
+  uninhabited-chunk, generated-structure, container, natural/level/support, nearby
+  player and air-only placement checks. Named protection plugins without a
+  VaultProtection provider fail closed. Adapters approve full buffers and claims.
+- PLANNED manifests commit before any placement. CLEANUP reserves removal before
+  restoring blocks, stopping claim races. Changed/occupied blocks are preserved;
+  manifests remain available after removal or a missing-world restart.
+- Idempotent key bonuses for completed bounty payouts and King victories, including
+  zero-cash King events. Historical pre-installation payouts are not multiplied.
+  No new currency, destructive loot commands or automatic world deletion.
+- crates.yml, vaults.yml, command/permission descriptors, documentation, test
+  fixture/client source, dedicated Phase 4 build/artifact workflow.
+
+EXECUTED MAVEN VERIFICATION
+Local reactor clean verify: BUILD SUCCESS for parent/Common/Core/Lobby/Velocity.
+56 automated tests: existing 37 plus 19 loot tests; zero failures/errors/skips.
+Loot tests cover exact weighted probabilities/boundaries, invalid weights, all
+five default tables, key shape/unknown/wrong-tier rejection, copied-key replay,
+source idempotency, transaction rollback, owner-bound delivery transitions,
+interrupted delivery/restart persistence, planned/expired/already-claimed vaults,
+cooldowns, every placement eligibility gate, cleanup reservation races, retained
+block manifests, crate locations, schema versions, bounty and King bonus recovery.
+Registry-dependent material validation is executed on real Paper by RewardFactory;
+pure configuration validation does not invent a standalone Paper registry.
+
+REAL PAPER / LIVE CLIENT VERIFICATION
+Paper 1.21.11 build 132; Temurin Java 21.0.13+9; local offline Mineflayer 4.39.0.
+Final client process: exit 0, ALL LOOT CLIENT CHECKS PASS.
+- 54-slot tier/preview inventories opened; shift extraction rejected.
+- All five crate tiers opened and delivered their stored payload exactly once.
+- Copied spent keys were reinserted and rejected for every tier; repeat audits
+  still found exactly one persisted opening and one physical selected reward.
+- COMMON/RARE/EPIC/LEGENDARY/MYTHIC vaults spawned through the normal safety path,
+  were claimed once and passed manifest restoration checks in a marked flat test
+  world, with test-only shortened radius/cooldown settings.
+- A completely full inventory left a key parcel WAITING. Freeing one slot led to
+  DELIVERED, then the fixture restored its original test inventory.
+- The passing run followed a server restart with old receipt-tagged inventory,
+  exercising validation of completed receipts rather than reissuing old rewards.
+- Earlier Phase 2 trim/item and Phase 3 command/schema startup probes still passed.
+- Paper shut down through its normal stop command; no worlds deleted.
+Reproducible client/probe source and selected pass markers are under
+polder-core/src/integration; fixture classes/JAR are excluded from production.
+
+ERRORS FOUND AND FIXED
+A Comparator import conflict was fixed before successful compilation. A pure
+configuration test initially hit Paper's server-only registry; validation was
+split correctly, with actual item/enchantment checks retained on live Paper.
+Live testing exposed sequential old-receipt validation and accidental periodic
+interaction locks from empty mailbox checks; bulk prewarming and separate check/
+delivery states fixed both. Early fixture-only flat-world settings and a
+cross-plugin package-private method call were corrected. Failed preliminary runs
+are not represented as passing full-client runs. The unrelated external Mojang
+public-key fetch warning persists in this isolated offline environment.
+
+OPERATOR SETUP / LIMITS
+Register empty single containers with crateadmin; explicitly allow vault worlds.
+A third-party protection plugin requires an approving VaultProtection adapter;
+unknown/custom claim plugins must be added to the protected-plugin list. No
+bundled claim-plugin adapter is invented. Untouched terrain checks intentionally
+reject many locations rather than weaken safety. Artificial/external-editor
+builds without habitation metadata require a correctly designated wilderness
+world and approving adapter. Only air is ever used for new structure blocks.
+Receipt delivery assumes Paper-owned inventory persistence; cross-server inventory
+synchronizers or independently rolled-back backups require coordinated integration.
+No forced JVM power-cut test, third-party protection/renderer/plugin matrix or
+long-running performance test was executed. Database interruption/replay recovery
+was tested automatically; live tests covered normal saves/restarts and real client
+inventory/GUI behavior. No claims are made for tests that were not executed.
+GitHub Actions Phase 4 run 42482589159: completed successfully.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42482589159
+All 56 tests passed; PolderCore-Phase4 and phase4-tests artifacts uploaded.
+The live Paper/client checks were executed locally, not invented as CI tests.

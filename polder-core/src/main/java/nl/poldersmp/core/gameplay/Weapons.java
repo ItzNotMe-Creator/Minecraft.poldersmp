@@ -87,6 +87,11 @@ public final class Weapons implements Listener, TabExecutor {
         : k == Kind.FROSTBITE_SWORD ? Material.DIAMOND_SWORD : Material.NETHERITE_SWORD;
   }
 
+  /** Canonical reward factory; preserves the existing identity, serial, name and lore. */
+  public ItemStack create(Kind kind) {
+    return item(kind, true);
+  }
+
   private ItemStack item(Kind k, boolean real) {
     ItemStack item = new ItemStack(material(k));
     var meta = item.getItemMeta();
@@ -98,7 +103,7 @@ public final class Weapons implements Listener, TabExecutor {
             Component.text("LEGENDARY • PolderSMP"),
             Component.text(config.getString("weapons." + k.name() + ".description", "")),
             Component.text("Cooldown: " + value(k, "cooldown", 20) + " seconds"),
-            Component.text("Acquisition: administrator grant")));
+            Component.text("Acquisition: configured PolderSMP rewards")));
     if (real) {
       meta.getPersistentDataContainer().set(type, PersistentDataType.STRING, k.name());
       meta.getPersistentDataContainer()

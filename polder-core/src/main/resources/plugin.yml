@@ -30,6 +30,14 @@ commands:
     description: Fund, reduce or refund bounties
   king:
     description: King of the SMP competition
+  crates:
+    description: Crate previews, keys and statistics
+  crateadmin:
+    description: Configure crates and registered physical keys
+  vaults:
+    description: Secret vault statistics
+  vaultadmin:
+    description: Spawn, clean up or configure secret vaults
 permissions:
   poldercore.info:
     default: op
@@ -65,3 +73,11 @@ permissions:
     default: false
   polder.king.exempt:
     default: false
+  polder.crates.use:
+    default: true
+  polder.crates.admin:
+    default: op
+  polder.vaults.use:
+    default: true
+  polder.vaults.admin:
+    default: op

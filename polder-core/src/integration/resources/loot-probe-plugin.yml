@@ -1,0 +1,11 @@
+name: LootLiveProbe
+version: '1.0'
+main: nl.poldersmp.core.loot.LootLiveProbe
+api-version: '1.21.11'
+depend: [PolderCore]
+commands:
+  loottest:
+    permission: loottest.admin
+permissions:
+  loottest.admin:
+    default: op

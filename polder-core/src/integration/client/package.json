@@ -1,0 +1,7 @@
+{
+  "name": "polder-loot-integration-client",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "probe": "node loot-client.js" },
+  "dependencies": { "mineflayer": "4.39.0" }
+}

@@ -372,3 +372,11 @@ or prolonged load test was executed. Special attacks are normal cancellable
 server damage; region adapters must approve placement/claims. Cash reward tests
 are transactional automated tests; live defaults used zero cash. Phase 2's
 previously documented unfinished work is not silently claimed complete here.
+
+ACTUAL GITHUB ACTIONS RESULT
+Phase 5 run 42486845510 completed successfully on commit 461776a.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42486845510
+Job 128750467516: BUILD SUCCESS, 11 Common + 65 Core tests, no failures/errors/skips.
+PolderCore-Phase5 and phase5-tests artifacts uploaded successfully. This CI ran
+Maven/tests; the real Paper/client/restart checks described above ran locally.
+Review PR: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/4

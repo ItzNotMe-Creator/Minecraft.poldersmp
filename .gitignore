@@ -1,0 +1,7 @@
+**/target/
+.idea/
+*.db*
+work/
+dist/
+__pycache__/
+*.pyc

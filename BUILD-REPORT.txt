@@ -1,0 +1,79 @@
+PolderSMP Phase 1 Foundation
+Date: 2026-11-08
+
+SOURCE BASELINE
+The supplied GitHub repository had no commits, refs, files, AGENTS.md, README.md
+or BUILD-REPORT.txt. The owner explicitly authorized starting fresh. No former
+implementation or previously claimed four passing tests was available.
+
+IMPLEMENTED
+- Four Maven modules, Java 21 target, shared shaded foundation library.
+- Paper Core/Lobby entry points, descriptors; Velocity annotation-generated
+  descriptor and initialization entry point.
+- Independent validated properties configuration; module enable/disable;
+  Core database enable/disable; restart required for lifecycle toggles.
+- Core /poldercore info, reload, debug; matching operator-default permissions
+  and permission-filtered completion. Reload validates before replacing state.
+- Asynchronous SQLite manager, per-operation connection, foreign keys and busy
+  timeout, queued shutdown, clear readiness and initialization failure handling.
+- Transactional schema version tracking and V1__foundation.sql; repeatable
+  initialization and rejection of incompatible newer schemas.
+- UUID accounts and transaction IDs, atomic transfers, insufficient-funds
+  checks, duplicate transaction prevention, integer overflow rollback.
+- Consistent non-overwriting SQLite VACUUM INTO backup API.
+- JUnit tests, repeatable isolated Paper/Velocity smoke-test script.
+- GitHub Actions reactor build, shaded plugin/source/config artifact packaging
+  and test-report upload. No production server data included in packages.
+
+DEPENDENCY AND TOOLCHAIN DIAGNOSIS
+Paper API: io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT
+Velocity API: com.velocitypowered:velocity-api:3.4.0-SNAPSHOT
+Official Maven URL: https://repo.papermc.io/repository/maven-public/
+Central: https://repo.maven.apache.org/maven2/
+Official metadata and artifact downloads succeeded. Historical HTTP 403 was
+not reproduced; no evidence establishes its former cause.
+Maven was absent; installed Maven 3.9.11 locally from Maven Central.
+The system Java 21 runtime lacked the matching JDK compiler. Installed official
+Temurin JDK 21.0.13+9 locally from Adoptium.
+Maven initially reported Network is unreachable. Explicit local Maven proxy
+settings fixed this (Maven does not automatically consume HTTPS_PROXY).
+The downloaded JDK needed the environment's trusted system CA store to validate
+TLS through its proxy. Used /etc/ssl/certs/java/cacerts; verification stayed on.
+No insecure TLS flags, unofficial artifact mirrors or API stubs used.
+
+EXECUTED AUTOMATED CHECKS
+Command: mvn -B -U clean verify, with environment-local Maven settings/repository
+and JDK 21/system trust store (not checked into the project).
+Result: BUILD SUCCESS for parent, common, core, lobby, velocity.
+JUnit: 11 tests, 0 failures, 0 errors, 0 skipped.
+Coverage: idempotent migrations, atomic transfer/replay protection, insufficient
+funds, competing spends, rollback after credit overflow, consistent backup and
+refusal to overwrite, invalid transfers, invalid configuration, existing config
+preservation, newer-schema rejection/data preservation, shutdown queue behavior.
+JAR packaging checked: plugin descriptors and shared configuration present;
+Paper and Velocity server API classes are not bundled.
+
+RUNTIME VERIFICATION
+Initial live test: Paper 1.21.11 build 132, Temurin Java 21.0.13+9.
+PolderCore and PolderLobby enabled successfully, SQLite=ready.
+/poldercore info, reload and debug executed from console successfully.
+Paper shut down cleanly, exit code 0.
+Velocity 3.4.0 build 563: PolderVelocity loaded and logged foundation enabled;
+localhost listener started; orderly shutdown, exit code 0.
+Official server JAR SHA-256 values matched the Paper downloads API.
+The owner explicitly accepted Minecraft EULA for these isolated temporary tests.
+Fresh repeat using the final build and scripts/smoke-test.py: PASS for Paper
+and Velocity, both exit code 0. Core database readiness and commands asserted.
+
+LIMITATIONS AND REMAINING SCOPE
+No client login/gameplay, multiplayer permission interaction, production
+forwarding/authentication, Windows installation or long-running load test was
+performed. Both Paper plugins were load-tested together on one isolated Paper
+instance; their module settings/data directories are separate.
+The isolated offline Paper test logged an external Mojang public-key fetch
+connection failure; it did not prevent plugin enable or local command checks.
+The first temporary Velocity config failed validation due to default forced-host
+entries; the test fixture was corrected and the proxy then started successfully.
+GitHub Actions execution status: not yet run; no CI success claimed.
+The eventual USB deployment ZIP and gameplay systems belong to later phases.
+No Phase 2 implemented. No changes to live worlds, secrets or player data.

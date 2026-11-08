@@ -1,0 +1,16 @@
+name: PolderCore
+version: 1.0.0-SNAPSHOT
+main: nl.poldersmp.core.PolderCore
+api-version: '1.21.11'
+description: PolderSMP Phase 1 foundation
+commands:
+  poldercore:
+    description: PolderCore administration
+    usage: /poldercore <info|reload|debug>
+permissions:
+  poldercore.info:
+    default: op
+  poldercore.reload:
+    default: op
+  poldercore.debug:
+    default: op

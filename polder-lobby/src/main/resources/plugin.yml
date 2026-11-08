@@ -1,0 +1,5 @@
+name: PolderLobby
+version: 1.0.0-SNAPSHOT
+main: nl.poldersmp.lobby.PolderLobby
+api-version: '1.21.11'
+description: PolderSMP Phase 1 foundation

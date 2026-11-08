@@ -300,4 +300,7 @@ No forced JVM power-cut test, third-party protection/renderer/plugin matrix or
 long-running performance test was executed. Database interruption/replay recovery
 was tested automatically; live tests covered normal saves/restarts and real client
 inventory/GUI behavior. No claims are made for tests that were not executed.
-GitHub Actions results will be recorded after the review branch is pushed.
+GitHub Actions Phase 4 run 42482589159: completed successfully.
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/42482589159
+All 56 tests passed; PolderCore-Phase4 and phase4-tests artifacts uploaded.
+The live Paper/client checks were executed locally, not invented as CI tests.

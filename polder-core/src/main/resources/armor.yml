@@ -1,0 +1,52 @@
+enabled: true
+bonuses:
+  sentry-speed: 0.05
+  dune-resistance: 0.20
+  coast-swimming: 0.10
+  wild-regeneration: 0.20
+  ward-resistance: 0.05
+  eye-dodge: 0.10
+  rib-resistance: 0.20
+  spire-jump: 0.10
+  silence-resist: 0.20
+  raiser-mining: 0.10
+  shaper-resistance: 0.15
+  wayfinder-speed: 0.05
+  bolt-chance: 0.05
+  bolt-damage: 1
+  ocean-damage: 0.10
+  shadow-sneaking: 0.15
+  nature-regeneration: 0.10
+thresholds:
+  tide: 2
+  snout: 2
+  vex: 2
+sets:
+  nether-king:
+    enabled: true
+    trim: snout
+    cooldown: 60
+  ocean-guardian:
+    enabled: true
+    trim: tide
+  shadow-assassin:
+    enabled: true
+    trim: silence
+    cooldown: 90
+  natures-wrath:
+    enabled: true
+    trim: wild
+    cooldown: 120
+scaling:
+  0: 0
+  1: 0.25
+  2: 0.50
+  3: 0.75
+  4: 1.0
+additional-patterns:
+  flow:
+    speed: 0.03
+  guster:
+    speed: 0.03
+  host:
+    speed: 0.03

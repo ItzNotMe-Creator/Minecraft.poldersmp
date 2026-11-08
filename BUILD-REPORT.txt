@@ -81,3 +81,44 @@ test-results artifacts uploaded successfully. CI validates compilation/unit
 tests/packaging; live runtime smoke tests were executed locally.
 The eventual USB deployment ZIP and gameplay systems belong to later phases.
 No Phase 2 implemented. No changes to live worlds, secrets or player data.
+
+PHASE 2 REVIEW BUILD — UNFINISHED (2026-11-08)
+Branch: phase2/gameplay. Only PolderCore gameplay code/dependencies changed;
+Common, Lobby and Velocity source and dependencies remain unchanged.
+Implemented: five persistent weapons, proc/cooldown logic, safe-ground dash,
+non-destructive area slam/knockback, confirmed-kill healing, read-only 54-slot
+weapon GUI, admin grants/info/reload; trim registry detection, mixed scaling,
+16 requested pattern effects plus configurable Host/Flow/Guster speed effects,
+four set recognizers/procs, attribute cleanup/potion ownership tracking,
+collection GUI, async SQLite discovery persistence and UUID leaderboard.
+Configuration: weapons.yml, armor.yml, messages.yml. Matching permissions and
+command completion provided. Optional AbilityGuard integration contract;
+recognized protection plugins fail closed for movement/area abilities unless a
+guard provider is installed. No bundled WorldGuard/claims adapter yet.
+
+EXECUTED: Maven clean verify: BUILD SUCCESS, all four modules.
+Unit tests: 11 existing database tests + 7 Core gameplay tests = 18 passing;
+0 failures/errors/skips. Core tests exercise chance boundaries, item metadata
+validation, cooldown isolation/boundaries, mixed scaling/set recognition,
+untrimmed armor rejection, YAML defaults, idempotent/persistent discovery DB.
+An attempted mocked trim-registry test failed because Paper requires a live
+RegistryAccess; replaced that registry check with a real-server integration probe.
+Real Paper 1.21.11 build 132: gameplay Core enabled, database ready, probe passed
+18 actual trim patterns and 5 real item-PDC serialization round trips.
+The probe source is in polder-core/src/integration/java and is an isolated test
+plugin, not packaged in PolderCore. It was compiled with the resolved Paper/Core
+classpath and run on the temporary Paper server. No multiplayer combat or
+client GUI tests were executed. The unrelated Mojang key-fetch warning persists.
+The first combined test harness also attempted Velocity with its old invalid
+fixture and failed there; Phase 2 only changes Core, and the final harness is
+Paper-only. No Phase 2 Velocity change or new Velocity verification is claimed.
+
+NOT COMPLETE: bundled protection adapters, acquisition beyond admin grants,
+durable cross-storage serial authority, comprehensive per-ability effect/GUI
+configuration and multiplayer regression checks. Partial protections are not a
+guarantee against administrative/third-party item cloning. See README's exact
+continuation task. This build must remain a draft and must not be presented as
+complete Phase 2. No Phase 3 work performed.
+
+Final Paper-only harness: exit 0; weaponadmin reload and armoradmin reload
+succeeded, registry/PDC probe passed, orderly shutdown.

@@ -45,7 +45,8 @@ Booleans are validated strictly. Invalid startup configuration disables a Paper
 plugin; Velocity reports initialization failure. Each plugin has its own file.
 Module and database toggles require a server restart. `/poldercore reload`
 updates supported runtime settings only and preserves current settings on error.
-No gameplay, GUI, routing, economy commands or Phase 2 features are included.
+The Phase 1 baseline contains no gameplay; see the Phase 2 review-build section
+for the additions on the gameplay branch.
 
 ## Core commands
 
@@ -108,3 +109,70 @@ server directory. The offline mode is restricted to these isolated smoke tests;
 production proxy forwarding and authentication must be configured separately.
 When your environment requires a Java TLS proxy, use its documented
 `JAVA_TOOL_OPTIONS`/trust store settings. Server downloads are not bundled.
+
+## Phase 2 review build (unfinished)
+
+Phase 2 lives entirely in PolderCore, on branch `phase2/gameplay`. It is a review
+build, not a claim that every Phase 2 acceptance criterion is finished. Common,
+Lobby and Velocity implementations are unchanged. Configuration files are copied
+on first use without overwriting existing files:
+
+- `weapons.yml`: five legendary weapons, chances, damage, durations, cooldowns,
+  dash distance, slam radius, module toggle, particles/sounds, admin acquisition.
+- `armor.yml`: independent trim module, numeric strengths, piece scaling,
+  activation thresholds, four configurable set patterns and set cooldowns.
+- `messages.yml`: GUI titles and principal permission/reload messages.
+
+Commands: `/weapons`, `/weaponinfo`, `/weaponadmin give <online-player> <weapon>`,
+`/weaponadmin reload`, `/armorinfo [online-player]`, `/armorcollection`, `/armortop`,
+`/armoradmin give <online-player> <trim> <helmet|chestplate|leggings|boots>`,
+`/armoradmin reload`. Weapon identifiers are the uppercase names in weapons.yml;
+trim identifiers are lowercase vanilla registry keys. Reloads validate before
+replacing configuration. Cooldowns are per player and ability, survive equipment
+swaps/reconnects in the same process, and reset on server restart.
+
+Permissions: `polder.weapons.use`, `polder.weapons.view`, `polder.armor.use`,
+`polder.armor.view` default true; `polder.weapons.admin`, `polder.armor.admin`,
+`polder.armor.inspect` default op. Viewing other players requires inspect.
+The 54-slot weapon GUI is read-only; preview items never contain weapon PDC.
+Issued weapons carry a type and UUID serial, require the matching base material
+and a single-item stack, and cannot be combined in anvils. Activation rejects
+multiple matching serials in online player inventories. This is not a durable
+registry of every copy in offline inventories or containers.
+
+Armor uses the supported ArmorMeta/ArmorTrim API and live trim registry. All 18
+patterns in Paper 1.21.11 are detected and represented in collection/grant tools.
+Host, Flow and Guster have configurable additional speed defaults. Unknown future
+patterns can use `additional-patterns.<key>.speed`. Numeric effects scale by
+matching pieces; mixed patterns count separately. Numeric modifiers use stable
+plugin keys, replacing rather than accumulating bonuses. Inventory/equip changes
+are reconciled every 10 ticks; equipment-change, death, quit and world-change
+handlers clean effects. Plugin-owned potion effects are tracked; external potion
+changes relinquish ownership, and pre-existing potions are never overwritten.
+Continuous effects have short leases; temporary proc effects use their durations.
+
+Discovery data lives in a separate `armor.db` with transactional schema version
+1, UUID/pattern uniqueness, async reads/writes and a UUID-based top-ten list.
+Disabling the armor gameplay flag does not erase collection history.
+
+Damage uses ordinary cancellable Paper damage events and checks world PvP and
+scoreboard friendly fire for weapon damage. Dash checks body collision, ground,
+world border and teleport cancellation. Slam has line-of-sight/radius checks and
+no block changes. Lightning is visual-only. A Bukkit ServicesManager
+`AbilityGuard` provider can approve movement and damage through external region
+systems. Without a provider, dash and slam fail closed when WorldGuard,
+GriefPrevention or Towny is detected. No bundled adapter for those plugins has
+been implemented yet; other protection plugins must supply a guard or be tested
+and integrated before enabling these movement/area abilities.
+
+### Exact continuation task
+
+Finish Phase 2 acceptance on `phase2/gameplay`: implement and integration-test
+protection adapters; add acquisition options beyond configurable admin grants;
+finish durable weapon-serial authority across offline/container transfers;
+complete per-ability duration/cooldown/effect and GUI configuration; verify potion
+ownership and cleanup with real competing plugins; add multiplayer combat,
+collision, PvP/friendly-fire, equipment/break/death/respawn/world-change, GUI and
+anti-duplication regression tests. Re-run the real-server probe, Maven and CI,
+update this report, then promote the draft only after those criteria pass.
+Do not implement Phase 3.

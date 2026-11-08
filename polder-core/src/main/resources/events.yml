@@ -1,0 +1,70 @@
+enabled: true
+worlds: []
+interval-seconds: 3600
+timezone: Europe/Amsterdam
+spawn-min-radius: 512
+spawn-max-radius: 5000
+search-attempts: 8
+arena-radius: 6
+bar-distance: 64
+cleanup-delay-seconds: 10
+maximum-participants: 30
+minimum-damage: 5
+sounds: true
+particles: true
+economy:
+  treasury: ''
+  participation-money: 0
+  winner-money: 0
+types:
+  METEOR:
+    enabled: true
+    weight: 25
+    warning-seconds: 30
+    expiration-seconds: 900
+    reward-tier: EPIC
+    key-tier: COMMON
+    fall-seconds: 5
+  SUPPLY_DROP:
+    enabled: true
+    weight: 30
+    warning-seconds: 30
+    expiration-seconds: 900
+    reward-tier: RARE
+    key-tier: RARE
+    fall-seconds: 8
+  BOSS:
+    enabled: true
+    weight: 20
+    warning-seconds: 60
+    expiration-seconds: 1200
+    reward-tier: LEGENDARY
+    key-tier: RARE
+    mob: ZOMBIE
+    name: 'Polder Guardian'
+    health: 400
+    special-damage: 4
+    special-interval-seconds: 8
+  PIRATE_SHIP:
+    enabled: true
+    weight: 15
+    warning-seconds: 30
+    expiration-seconds: 1200
+    reward-tier: EPIC
+    key-tier: COMMON
+    persist-structure: false
+  DUNGEON:
+    enabled: true
+    weight: 10
+    warning-seconds: 60
+    expiration-seconds: 1800
+    reward-tier: LEGENDARY
+    key-tier: RARE
+    mob: HUSK
+    name: 'Dungeon Warden'
+    health: 300
+    waves: 3
+    mobs-per-wave: 3
+    trap: true
+    special-damage: 3
+    special-interval-seconds: 10

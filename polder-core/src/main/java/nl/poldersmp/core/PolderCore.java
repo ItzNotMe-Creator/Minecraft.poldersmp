@@ -10,6 +10,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
   private nl.poldersmp.core.gameplay.Armor armor;
   private nl.poldersmp.core.competition.Competitions competitions;
   private nl.poldersmp.core.loot.Loot loot;
+  private nl.poldersmp.core.events.EventManager worldEvents;
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
@@ -57,6 +58,12 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
                               } catch (RuntimeException error) {
                                 getLogger().severe("Loot startup failed: " + error);
                               }
+                              try {
+                                worldEvents =
+                                    new nl.poldersmp.core.events.EventManager(this, database);
+                              } catch (RuntimeException error) {
+                                getLogger().severe("World event startup failed: " + error);
+                              }
                             }
                           });
                 if (e != null) {
@@ -71,6 +78,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
 
   @Override
   public void onDisable() {
+    if (worldEvents != null) worldEvents.close();
     if (loot != null) loot.close();
     if (competitions != null) competitions.close();
     if (armor != null) armor.close();

@@ -447,3 +447,67 @@ All tables are in the existing `polder.db`, behind an independent versioned
 armor schemas/data are preserved. The Phase 4 CI artifact contains PolderCore.jar,
 YAML defaults, full source and test reports. See BUILD-REPORT.txt for executed
 unit, persistence, real-client and restart checks.
+
+## Phase 5: automatic world events
+
+PolderCore now runs one persistent world event at a time. Enable individual types
+in `events.yml`, explicitly allow wilderness worlds with `worlds`, and configure
+intervals, weights, warnings, expiration, effects and rewards. The default empty
+world list deliberately prevents placement until an operator selects a world.
+`/events` lists types; `/events active`, `/events next` and `/events top` show
+status, the next scheduled attempt and lifetime participant statistics. Operators
+use `/eventadmin start <event>`, `stop` and `reload` (including tab completion).
+Permissions are `polder.events.view`, `polder.events.play` and
+`polder.events.admin`; `polder.events.exempt` excludes a player from competition.
+Reload is refused during an event; its saved configuration remains authoritative.
+
+- METEOR: warning, falling display, impact effects and one sealed resource reward.
+- SUPPLY_DROP: falling supply display, one contested treasure claim and a crate key.
+- BOSS: configured hostile mob, health/progress bar, cancellable close-range special
+  attacks, tracked damage, winner loot and threshold-based participation keys.
+- PIRATE_SHIP: air-only ocean deck, mast and sail with two independently claimed
+  treasure barrels. `persist-structure` can retain the completed landmark.
+- DUNGEON: open-top air-only ruins, configurable enemy waves, damaging trap,
+  final boss, participation keys and a final treasure objective.
+
+Meteor/drop displays do not use explosions, fire, terrain changes or falling-block
+physics. Boss mobs are restricted to the supported hostile whitelist (zombie,
+husk, skeleton, stray, vindicator and piglin brute). Combat uses normal cancellable
+Paper damage events; spectators, creative players and exempt players cannot earn
+or claim. Mobs stay near the arena and cannot transform, pick up items or change
+blocks. Event blocks, containers and projectiles are protected during their
+lifetime; no loose vanilla mob loot or experience duplicates the stored rewards.
+
+Placement reuses the Phase 4 protection service and conservative terrain guards,
+including asynchronous bounded chunk loading, held chunk tickets, border buffers,
+uninhabited chunks, no structures/containers, nearby-player exclusion and natural
+terrain checks. Ocean events additionally require ocean biome/water support.
+Every new structure block must be air. Dungeon floors are temporary blocks above
+existing ground: this system does not excavate player terrain. A named protection
+plugin without an approving `VaultProtection` provider fails closed. Adapters must
+approve placement and claims; unknown/custom protection plugins need registration
+in `vaults.yml`. These restrictions intentionally reject many candidate locations.
+
+The `db/events/V1__world_events.sql` migration adds an independent schema to the
+existing `polder.db`. A unique live-event constraint, compare-and-set phases,
+per-chest reservations, damage snapshots, actor UUIDs, restoration manifests and
+an award outbox cover scheduling through cleanup. Restart retains the original
+expiry/configuration, health and participation; incomplete plans roll back and
+expired events clean up. Missing worlds retain recovery metadata. Cleanup restores
+only matching event blocks and preserves changed blocks/nonempty containers.
+Successful/naturally expired ships can persist; administrative cancellation rolls
+back their temporary geometry. No worlds are deleted.
+
+Selected item payloads are frozen before reward reservation. Stable event/source
+IDs bridge the outbox to Phase 4's durable mailbox, including offline players,
+full inventories and replay after interruption. Its tier tables provide resources,
+canonical Phase 2 weapons and trimmed armor; keys use the registered crate factory.
+Boss/dungeon participation and wins feed persistent `/events top` statistics.
+Optional cash rewards use the existing transactional economy service and a funded
+UUID treasury: a bounded budget is reserved before the event and unused funds are
+refunded. Default money rewards are zero; there is no second currency or minting.
+
+See BUILD-REPORT.txt and `polder-core/src/integration` for executed tests and the
+isolated Paper/client fixture. The Phase 5 Actions artifact includes the JAR,
+configuration defaults, source archive and separate test reports. Phase 6 is not
+implemented. Existing earlier-phase limitations remain documented above.

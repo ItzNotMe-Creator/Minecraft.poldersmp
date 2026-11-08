@@ -31,3 +31,21 @@ reward delivery, replayed keys, every vault rarity, restoration and full-invento
 deferral. It shortens vault cooldown/radius settings only in the isolated server.
 Run it again after a server restart to exercise validation of old receipt-tagged
 inventory. Success is `ALL LOOT CLIENT CHECKS PASS`; retain both server/client logs.
+
+## World event client
+
+The Phase 5 fixture is `java/nl/poldersmp/core/events/EventsLiveProbe.java` with
+`events-probe-plugin.yml`. Compile/package it using the same classpath procedure
+above, substituting EventsLiveProbe paths and JAR name. Install in the isolated
+server only. It creates marked `polder_events_land_probe` and
+`polder_events_ocean_probe` worlds, equips EventsProbe, changes only that test
+server's events.yml and shortens warnings/lifetimes. Unmarked worlds are refused.
+Make EventsProbe an operator; run `node client/events-client.js` with the pinned
+client dependencies installed. Optional `POLDER_EVENTS_START_FILE` delays setup
+until that marker exists. The client connects only to 127.0.0.1:25575, offline.
+
+It fights real waves and bosses, claims meteor/drop/ship/dungeon objectives and
+checks persisted parcel payloads, unique physical receipts and full manifest
+restoration. Success: `ALL WORLD EVENT CLIENT CHECKS PASS`. Selected executed
+markers are recorded in `events-verification.txt`. Test fixtures are excluded from
+production JARs. Never run them on a live player server.

@@ -1,0 +1,76 @@
+enabled: true
+protect-world: true
+# No world coordinates are guessed. /lobbyadmin setspawn configures the world.
+spawn: {}
+modules:
+  portals: true
+  parkour: true
+  gadgets: true
+  holograms: true
+  cosmetics: true
+  secrets: true
+  daily: true
+  selector: true
+  npcs: true
+  profiles: true
+  events: true
+  welcome: true
+network:
+  target: smp
+  poll-seconds: 15
+  max-age-seconds: 45
+welcome:
+  first-join-firework: true
+  announcements: true
+  title: Welcome to PolderSMP
+  subtitle: Your adventure starts here
+  sound: ENTITY_PLAYER_LEVELUP
+  particles: true
+navigation:
+  enabled: true
+  selector: {slot: 0, material: COMPASS, name: Server Selector}
+  cosmetics: {slot: 2, material: CHEST, name: Cosmetics}
+  profile: {slot: 4, material: PLAYER_HEAD, name: Your Profile}
+  parkour: {slot: 6, material: FEATHER, name: Parkour}
+  daily: {slot: 8, material: CLOCK, name: Daily Rewards}
+gui:
+  title: PolderSMP Lobby
+  filler: GRAY_STAINED_GLASS_PANE
+  sounds: true
+daily:
+  timezone: Europe/Amsterdam
+  tokens: 5
+  unlock: ''
+events:
+  automatic: false
+  interval-seconds: 1800
+  warning-seconds: 10
+  duration-seconds: 120
+  minimum-participants: 2
+  course: ''
+gadgets:
+  cooldown-seconds: 5
+  double-jump: true
+  grappling: true
+  launch-pads: true
+  blaster: true
+  staff: true
+  launch-material: LIGHT_WEIGHTED_PRESSURE_PLATE
+cosmetics:
+  maximum-visual-players: 32
+  catalog:
+    trail_spark: {category: trail, material: BLAZE_POWDER, price: 5, name: Spark Trail}
+    hat_gold: {category: hat, material: GOLDEN_HELMET, price: 10, name: Orbiting Gold Hat}
+    wings: {category: wings, material: FEATHER, price: 15, name: Angel Wings}
+    pet: {category: pet, material: RABBIT_SPAWN_EGG, price: 20, name: Friendly Bunny}
+    join_spark: {category: join, material: FIREWORK_ROCKET, price: 5, name: Spark Arrival}
+    title_champion: {category: title, material: NAME_TAG, price: 30, name: Lobby Champion}
+selector:
+  material: GRASS_BLOCK
+  name: PolderSMP Survival
+  lore: Click to request proxy access
+holograms:
+  parkour-course: ''
+effects:
+  particles: true
+  sounds: true

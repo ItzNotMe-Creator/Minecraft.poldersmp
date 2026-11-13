@@ -1,0 +1,7 @@
+const mineflayer=require('mineflayer'),assert=require('node:assert/strict');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const bot=mineflayer.createBot({host:'127.0.0.1',port:25578,username:'LobbyFinal',version:'1.21.11',auth:'offline'});
+bot.on('messagestr',m=>{console.log(m);if(m.includes('PROBE FAIL'))throw new Error(m)});bot.on('error',e=>{throw e});
+function msg(part,action){return new Promise((resolve,reject)=>{const listener=text=>{if(text.includes(part)){clearTimeout(timer);bot.off('messagestr',listener);resolve(text)}};const timer=setTimeout(()=>reject(new Error('Missing '+part)),18000);bot.on('messagestr',listener);action();});}
+async function main(){await new Promise(r=>bot.once('spawn',r));await sleep(1800);let end=Date.now()+18000;while(bot.game.gameMode!=='survival'&&Date.now()<end)await sleep(100);assert.equal(bot.game.gameMode,'survival');await msg('PROBE GRANTS PASS',()=>bot.chat('/lobbyprobe grants'));await sleep(1100);await msg('NATIVE STATUS HOLOGRAM PASS',()=>bot.chat('/lobbyprobe hologram'));await sleep(1100);await msg('REAL PLACEHOLDERAPI EXPANSION PASS',()=>bot.chat('/lobbyprobe placeholders'));console.log('FINAL PAPER HOLOGRAM FALLBACK AND PAPI CHECK PASS');bot.quit();}
+main().then(()=>setTimeout(()=>process.exit(0),300)).catch(e=>{console.error(e.stack);bot.quit?.();setTimeout(()=>process.exit(1),300)});setTimeout(()=>process.exit(1),60000).unref();

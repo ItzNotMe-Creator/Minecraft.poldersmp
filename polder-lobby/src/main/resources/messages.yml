@@ -1,0 +1,8 @@
+prefix: '[PolderSMP] '
+network-unavailable: Network connection unavailable. Please try again later.
+server-locked: The SMP is locked for maintenance.
+server-offline: The SMP is offline.
+activity-busy: Finish or skip your current activity first.
+welcome: Welcome to PolderSMP, {player}!
+daily-success: 'Daily reward claimed. Streak: {streak}'
+secret-found: 'Secret discovered: {secret}'

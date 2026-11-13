@@ -1,0 +1,6 @@
+# /parkour create <id>, then setstart/setfinish/checkpoint <id>.
+minimum-millis: 1000
+checkpoint-penalty-millis: 1000
+first-completion-tokens: 5
+maximum-step: 6
+courses: {}

@@ -1,0 +1,10 @@
+CREATE TABLE lobby_players(player TEXT PRIMARY KEY,name TEXT NOT NULL,tokens INTEGER NOT NULL DEFAULT 0 CHECK(tokens>=0 AND typeof(tokens)='integer'),playtime INTEGER NOT NULL DEFAULT 0,streak INTEGER NOT NULL DEFAULT 0,last_daily TEXT NOT NULL DEFAULT '',selection TEXT NOT NULL DEFAULT '');
+CREATE TABLE lobby_rewards(player TEXT NOT NULL,source TEXT NOT NULL,created INTEGER NOT NULL,PRIMARY KEY(player,source));
+CREATE TABLE lobby_unlocks(player TEXT NOT NULL,cosmetic TEXT NOT NULL,PRIMARY KEY(player,cosmetic));
+CREATE TABLE lobby_selections(player TEXT NOT NULL,category TEXT NOT NULL,cosmetic TEXT NOT NULL,PRIMARY KEY(player,category));
+CREATE TABLE lobby_records(player TEXT NOT NULL,course TEXT NOT NULL,millis INTEGER NOT NULL CHECK(millis>0),PRIMARY KEY(player,course));
+CREATE TABLE lobby_finishes(id TEXT PRIMARY KEY,player TEXT NOT NULL,course TEXT NOT NULL,millis INTEGER NOT NULL,created INTEGER NOT NULL);
+CREATE TABLE lobby_settings(name TEXT PRIMARY KEY,value TEXT NOT NULL);
+CREATE TABLE lobby_events(id TEXT PRIMARY KEY,type TEXT NOT NULL,course TEXT NOT NULL,status TEXT NOT NULL,starts INTEGER NOT NULL,ends INTEGER NOT NULL);
+CREATE UNIQUE INDEX lobby_one_event ON lobby_events((1)) WHERE status IN ('WARNING','ACTIVE');
+CREATE TABLE lobby_event_points(event TEXT NOT NULL,player TEXT NOT NULL,target TEXT NOT NULL,score INTEGER NOT NULL,PRIMARY KEY(event,player,target));

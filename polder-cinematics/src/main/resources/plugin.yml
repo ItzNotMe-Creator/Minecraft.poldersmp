@@ -1,0 +1,10 @@
+name: PolderCinematics
+version: 1.0.0-SNAPSHOT
+main: nl.poldersmp.cinematics.PolderCinematics
+api-version: '1.21.11'
+commands:
+  joinintro:
+    description: Cinematic introduction and waypoint editor
+permissions:
+  polder.intro.use: {default: true}
+  polder.intro.admin: {default: op}

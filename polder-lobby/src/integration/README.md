@@ -51,3 +51,22 @@ by these fixtures. Record which combinations were actually executed.
 review actual camera rendering, scene framing, easing and comfort in an unmodified
 Minecraft 1.21.11 client. Multiple-player endurance/proxy integration need their
 own recorded acceptance runs. See BUILD-REPORT.txt for exact executed outcomes.
+
+Additional executed scenarios are reproducible with `lobby-network-client.js`:
+use a fresh POLDER_LOBBY_USER and POLDER_LOBBY_PAPI=1 with the real plugin installed.
+POLDER_LOBBY_TEST_ROOT may name the marked disposable server root; the client
+then tests an invalid timezone reload and restores the exact original file in a
+finally block. This option refuses a root without the disposable marker. It also
+tests physical portal denial, native status TextDisplay, trusted-service failure
+and transfer-call counts, event winners/rewards and real PlaceholderAPI expansion.
+
+`cinematic-lifecycle-client.js` verifies a complete standalone path. To exercise
+shutdown, temporarily configure a 30-second intro in the disposable config,
+provide a unique POLDER_CINEMATIC_STOP_FILE, await that file **and process success
+from an active intro_pending snapshot check**, then send normal console `stop`.
+Do not mistake a yielded/running shell for a completed assertion. After server
+exit, verify empty intro_pending plus compressed vanilla player NBT: original
+playerGameType, abilities.mayfly/flying and safe Pos. Restore test duration, remove
+all other plugin JARs temporarily to a holding folder (retain their configs/data),
+and run the standalone path check. Restore the held JARs after normal shutdown.
+No worlds, player profiles or private configuration are erased by this procedure.

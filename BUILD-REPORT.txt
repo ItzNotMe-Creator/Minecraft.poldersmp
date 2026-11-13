@@ -749,3 +749,33 @@ REMAINING ACCEPTANCE / EXACT CONTINUATION TASK:
    Phase 10 still owns the USB installer/launcher deployment acceptance.
 See docs/PHASE8-SPEC.md, docs/ROADMAP.md, docs/LOBBY.md and the excluded integration
 fixture guide for setup, safety boundaries, commands, configuration and test steps.
+
+FINAL PHASE 8 NATIVE LIFECYCLE RESULTS
+Standalone Paper initialized exactly one plugin, PolderCinematics. Confirmed an
+active SQLite restoration snapshot while the player was in Spectator, then sent
+a normal console `stop` during a temporary 30-second intro. After exit, the journal
+was empty and parsed compressed vanilla player NBT confirmed playerGameType=0
+(Survival), mayfly=0, flying=0 and safe landing Y=180 in the disposable fixture.
+This verifies shutdown restoration without relying on a packet-only assumption.
+Earlier shutdown timing attempts did not establish an active snapshot and are
+not counted. The verified cycle checked the live snapshot before issuing stop.
+A separate standalone six-second path run then passed (132 position samples,
+Survival restored, configured safe X/Y landing). No Lobby, Core, PlaceholderAPI
+or fixture plugin was present for either standalone check. The server stopped
+normally afterward; held test plugins were restored, with all worlds/profiles
+retained. These checks still do not establish graphical camera smoothness.
+
+ACTUAL PHASE 8 GITHUB ACTIONS RESULTS
+Code commit 2137ca1540e0d8bc0b415ce55887baa86bd84670:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43470198216
+Linux job 132039766652 and Windows job 132039767693 both completed successfully.
+Each executed the full reactor with 171 passing tests, zero failures/errors/skips,
+BUILD SUCCESS, successful review packaging and artifact upload. Job logs were read.
+Artifacts: PolderSMP-Phase8-ubuntu-latest (14061210431),
+PolderSMP-Phase8-windows-latest (14061665533), and test reports for each OS.
+The PR-triggered Phase 8 run 43470247434 also completed successfully.
+Review: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/7 (draft).
+Phase 8 implementation is buildable/reviewable; graphical and third-party
+acceptance remains pending as described above. No Phase 9 or Phase 10 work was
+claimed complete. The final documentation-only commit records these actual
+results and native lifecycle evidence; its workflow results are separate runs.

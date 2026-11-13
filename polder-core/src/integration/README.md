@@ -49,3 +49,31 @@ checks persisted parcel payloads, unique physical receipts and full manifest
 restoration. Success: `ALL WORLD EVENT CLIENT CHECKS PASS`. Selected executed
 markers are recorded in `events-verification.txt`. Test fixtures are excluded from
 production JARs. Never run them on a live player server.
+
+## Nether regeneration probes
+
+`java/nl/poldersmp/core/nether/NetherLiveProbe.java` and
+`nether-probe-plugin.yml` are exclusively for a new localhost-only Paper test
+server (127.0.0.1:25576). The fixture refuses a missing `.polder-disposable-test`
+marker. It creates a high Overworld evacuation platform, deliberately changes
+blocks in the managed test Nether, provides actual portal construction and
+checks that the sentinel block disappeared after generation. Never install it
+on production. Compile/package with the same Core/API classpath procedure above,
+using NetherLiveProbe paths/name. Make only the offline NetherProbe test client
+an operator. EULA acceptance is required for the disposable server.
+
+`client/nether-client.js` uses the existing pinned Mineflayer dependency. Run
+with `POLDER_NETHER_MODE=evacuate`, `automatic` or `verify` after isolated setup;
+optional `POLDER_NETHER_START_FILE` delays commands until operator setup is ready.
+The first mode resumes an overdue paused fixture schedule and audits evacuation.
+The automatic mode builds/traverses a real portal, marks old terrain, requests a
+reset and waits for controlled shutdown. Enable automation only after completing
+the documented supervised manual reset/restart rehearsal. Verify mode checks
+new terrain and portal routing after restart. Keep server logs as evidence of
+full child exit, backup/archive and subsequent seed verification.
+
+`MaintenanceFixture.java` creates synthetic tiny NBT files, not Minecraft terrain.
+The Windows CI compiles it separately, invokes the actual PowerShell apply/recover
+wrapper, verifies the stored old seed and checks primary fixture files. Production
+Maven excludes all integration fixture classes. Selected live pass markers are in
+`nether-verification.txt`; no production world is used in these tests.

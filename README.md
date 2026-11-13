@@ -511,3 +511,42 @@ See BUILD-REPORT.txt and `polder-core/src/integration` for executed tests and th
 isolated Paper/client fixture. The Phase 5 Actions artifact includes the JAR,
 configuration defaults, source archive and separate test reports. Phase 6 is not
 implemented. Existing earlier-phase limitations remain documented above.
+
+## Phase 6: managed Nether regeneration
+
+PolderCore includes a separate managed Nether reset module, configured in
+`nether.yml`. Default interval: **120 real-world hours**; default backup retention:
+three successful verified backups. Enable the module only after reading
+[the installation, launcher rehearsal and recovery instructions](maintenance/README.md).
+The module and unattended shutdown are disabled by default. Unattended shutdown
+requires explicit configuration, an approved current launcher handshake and a
+successful supervised reset/restart rehearsal.
+
+The supported approach creates `polder_nether` through Paper's WorldCreator with
+its own seed and redirects Nether portals to it. Existing primary Nether builds
+are preserved in their original dimension; they are not automatically migrated.
+The Overworld and End are never reset. An existing unowned directory cannot be
+adopted or overwritten. Players logging in from a saved Nether position return
+to the safe Overworld location, avoiding stale coordinates after regeneration.
+
+`/nether [next|info]` shows state/countdown. Operators use
+`/netheradmin reset|pause|resume`; permissions are `polder.nether.use` and
+`polder.nether.admin`. Pauses/restarts keep the saved deadline. Announcements
+occur at 30, 10, 5, 1 minutes and 10 seconds. When due, Nether access closes,
+players evacuate and data saves. Without explicitly verified shutdown automation,
+the operation waits for a normal manual SMP stop.
+
+The Java 21 maintenance supervisor, with Windows PowerShell wrappers in
+`maintenance/`, waits for the actual server process to exit. It verifies world
+identity/paths/session locks, copies and hashes the entire managed world, archives
+the old directory and starts only the approved Java/Paper launcher. Paper then
+verifies the new effective and saved seed plus changed generated terrain/biomes
+before reopening access. No loaded world is deleted. Interrupted operations
+require explicit recovery by operation UUID, retain their backups, and keep
+access closed. The latest valid recovery backup is never pruned.
+
+State, history, operation UUID, last success, next deadline and maintenance phases
+persist in `plugins/PolderCore/nether-reset.db`, with a versioned independent
+migration. Phase 6 CI packages the JAR/configuration/source/operator scripts and
+runs Linux and Windows maintenance checks. See BUILD-REPORT.txt for actual test
+results and limits. Phase 7 is not implemented.

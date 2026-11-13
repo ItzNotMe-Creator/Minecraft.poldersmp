@@ -42,6 +42,10 @@ commands:
     description: Automatic world events and statistics
   eventadmin:
     description: Start, stop or reload world events
+  nether:
+    description: Managed Nether countdown and status
+  netheradmin:
+    description: Request, pause or resume Nether maintenance
 permissions:
   poldercore.info:
     default: op
@@ -93,3 +97,7 @@ permissions:
     default: op
   polder.events.exempt:
     default: false
+  polder.nether.use:
+    default: true
+  polder.nether.admin:
+    default: op

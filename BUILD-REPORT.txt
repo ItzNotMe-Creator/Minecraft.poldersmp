@@ -871,3 +871,27 @@ back up an existing route), preview on the actual Minecraft client, and check
 roof/tree clearance, tower framing, the landing spectacle and skip. No Phase9 or
 Phase10 network/deployment implementation was added. Actual CI results will be
 recorded only after their runs finish.
+
+CELESTIAL FINAL LIFECYCLE / ACTUAL CI RESULTS
+Confirmed an active smooth-camera snapshot before requesting graceful Ctrl+C
+shutdown of the disposable Paper process (the workspace reconnection had invalidated
+its old console session handle). Paper saved all dimensions normally. Parsed
+compressed player NBT verified Survival, flight/flying0, health20, two real totems,
+Pos[0,65,0] and Rotation[90,-1]; the recovery journal cleared and SQLite integrity
+passed. This was a real active-camera shutdown, not an assumed completed intro.
+Then removed the fixture JAR temporarily and restarted with exactly one plugin,
+PolderCinematics. A normal automatic join completed camera/landing/totem/cleanup,
+with two totems/health20 unchanged and explicit border packets80→10000→80. No
+orphan display entities or pending snapshots remained; seen state persisted.
+The server stopped normally; the fixture JAR, all worlds and player data remain.
+
+Actual standalone CI run43487967318 on production/test code0e26976357b21ff94441c2c0e1a1925342730f74:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43487967318
+Linux job132101364305 and Windows job132101364756 both passed all29 tests
+(Common11+Cinematics18), zero failures/errors/skips, BUILD SUCCESS and standalone
+packaging/upload. Read both job logs. Windows artifact14069060749; Ubuntu14069075242.
+Both deliver ONLY PolderCinematics.jar plus its installation ZIP/config/docs and
+checksums. PR8: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/8
+The final follow-up changes verification docs and test packet observation only;
+no further production changes were made after the tested code commit. Visual
+acceptance on the actual island remains the documented operator preview task.

@@ -54,3 +54,32 @@ for everyone. This is the exact remaining visual acceptance task.
 See repository BUILD-REPORT.txt and PR/Actions for additional shutdown/restart
 and actual Linux/Windows CI results when recorded. No successful CI result is
 assumed before a workflow finishes.
+
+## Final shutdown and standalone restart
+
+With an active interpolated camera and a confirmed pending SURVIVAL/flight0/flying0
+snapshot, the disposable server received a graceful Ctrl+C shutdown request after
+the workspace reconnection invalidated its old console handle. Paper ran normal
+plugin shutdown and saved all dimensions. Compressed vanilla player NBT then
+verified Survival, no flight, health20, two real totems, **Pos[0,65,0]** and
+**Rotation[90,-1]**. The SQLite recovery journal was empty and integrity_check=ok.
+
+The fixture JAR was temporarily moved out; Paper initialized **exactly one plugin**,
+PolderCinematics. After restart, a normal automatic join completed camera attach,
+full landing, one totem pop, camera return and zero remaining display entities.
+The player retained two real totems and health20. Captured border packets showed
+80 → 10000 → 80, proving the temporary viewer border and restoration to the real
+world border with no personal border present. Seen eligibility persisted and the
+journal cleared. Paper stopped normally; fixture files and all worlds/data remain.
+
+## Actual CI
+
+Production/test code commit 0e26976357b21ff94441c2c0e1a1925342730f74 passed:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43487967318
+Linux job132101364305 and Windows job132101364756 each executed **29 passing
+tests**, zero failures/errors/skips, BUILD SUCCESS and standalone packaging/upload.
+Job logs were read. Windows bundle14069060749 and Ubuntu bundle14069075242 contain
+only the cinematic plugin, single-plugin installation ZIP and checksums.
+Review: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/8 (draft for
+actual-island visual acceptance). The final follow-up changes only test packet
+observation and verification documentation, not production code.

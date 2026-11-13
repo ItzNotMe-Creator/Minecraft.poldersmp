@@ -802,3 +802,15 @@ verified on Paper, while actual DecentHolograms integration remains pending.
 The broader client acceptance should also exercise all five gadget animations/
 movement interactions against the intended lobby build and protection plugins;
 that full graphical/physics matrix has not been performed in this cloud session.
+
+ACTUAL FINAL 175-TEST CI RESULT
+Safeguard commit b9de8e5e43eceb0e2325567296abbf953a0bfdd2 passed Phase 8 run:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43472103701
+Linux job 132046360588 and Windows job 132046360954 both completed successfully.
+Read job logs confirm 11 Common + 137 Core + 21 Lobby + 6 Cinematics tests = 175,
+zero failures/errors/skips, including all four HologramAdapterTest cases.
+BUILD SUCCESS, review packaging and artifact uploads succeeded on both platforms.
+Ubuntu bundle 14061831392; Windows bundle 14061137292; both include JARs, default
+configuration, source ZIP and checksums. This result supersedes the earlier
+171-test CI count. The final report-only commit changes no production/test code.
+Phase 8 remains a draft pending the explicitly listed client/integration acceptance.

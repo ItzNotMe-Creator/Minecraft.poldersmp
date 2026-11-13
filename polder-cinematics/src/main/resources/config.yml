@@ -2,7 +2,7 @@ enabled: true
 # FIRST_JOIN / EVERY_JOIN / NETWORK_SESSION. Missing session provider uses FIRST_JOIN.
 mode: FIRST_JOIN
 delay-ticks: 30
-duration-seconds: 12
+duration-seconds: 16
 curve: CATMULL_ROM
 easing: SMOOTHSTEP
 maximum-chunks: 32
@@ -13,8 +13,8 @@ skip-marks-seen: true
 spawn: {}
 points: []
 scenes:
-  - 'Welcome above PolderSMP'
-  - 'Explore the lobby'
-  - 'PolderSMP awaits'
-  - 'Your adventure starts here'
-subtitle: 'Use /joinintro skip at any time'
+  - '<gradient:#9affdf:#e5fff8><bold>BEYOND THE CLOUDS</bold></gradient>'
+  - '<white><bold>FOLLOW THE CONSTELLATIONS</bold></white>'
+  - '<gradient:#39efbe:#ffd166><bold>POLDER SMP</bold></gradient>'
+  - '<aqua>Your story is about to begin</aqua>'
+subtitle: '<gray>✦ <white>/joinintro skip</white> at any time ✦</gray>'

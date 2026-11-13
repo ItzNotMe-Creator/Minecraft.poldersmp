@@ -1,0 +1,63 @@
+# auto prefers an existing Vault provider. Without one, money features stay disabled.
+# Select sqlite explicitly to use the existing Phase 1 accounts, without conversion.
+mode: auto
+# Whole currency units preserve the interpretation of existing Phase 1 balances.
+maximum-transaction: 1000000000
+sounds: true
+particles: true
+gui-titles:
+  SHOP: PolderSMP Shop
+  AUCTION: PolderSMP Auctions
+  BLACK: PolderSMP Black Market
+  CONFIRM: "{default}"
+shop:
+  enabled: true
+  items:
+    iron:
+      kind: ITEM
+      value: IRON_INGOT
+      amount: 16
+      buy: 160
+      sell-per-item: 5
+      permission: polder.shop.use
+    food:
+      kind: ITEM
+      value: COOKED_BEEF
+      amount: 16
+      buy: 80
+      sell-per-item: 2
+      permission: polder.shop.use
+auction:
+  enabled: true
+  listing-seconds: 172800
+  maximum-listings-per-player: 10
+  maximum-listings: 5000
+black-market:
+  enabled: true
+  refresh-seconds: 86400
+  stock-size: 3
+  pool:
+    lightning:
+      kind: WEAPON
+      value: LIGHTNING_BLADE
+      amount: 1
+      buy: 20000
+      limit: 1
+    shadow:
+      kind: WEAPON
+      value: SHADOW_DAGGER
+      amount: 1
+      buy: 18000
+      limit: 1
+    silence:
+      kind: TRIM
+      value: silence
+      amount: 1
+      buy: 12000
+      limit: 1
+    netherite:
+      kind: ITEM
+      value: NETHERITE_INGOT
+      amount: 2
+      buy: 8000
+      limit: 2

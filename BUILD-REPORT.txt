@@ -497,3 +497,146 @@ the stopped source before manifest verification/archive. Its regression test
 rejects a readable, self-consistent copy with different source contents. Final
 local reactor passed 104 tests, including this additional safety check.
 Review PR: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/5
+
+PHASE 7 - TEAMS AND ECONOMY (2026-11-13)
+Branch: phase7/teams-economy, based on phase6/nether-reset. No Phase 8.
+Java 21 / Paper 1.21.11 / Velocity 3.4.0 versions and Maven dependencies unchanged.
+
+COMPLETED
+- Independent teams.yml module with UUID memberships, atomic leader/officer/member
+  roles, leadership transfer, cached/offline UUID invitations, accept/deny/leave/
+  kick/promote/disband, creation/size/invitation limits and persistent combat tags.
+- Private async-chat interception with immutable snapshots/main-thread delivery,
+  membership-loss protection, 54-slot paginated member/statistics/top GUIs, team
+  friendly fire, consensual alliances/wars, rivals, war scoring/wins and anti-farm
+  kill history. Team changes/diplomacy/friendly-fire changes respect combat locks.
+- AbilityGuard plus normal damage cancellation integrates weapons/projectiles;
+  bounty anti-farming includes team/allies; King eligibility excludes all-friendly
+  participant groups by default. Staff ranks, scoreboards and region rules retained.
+- Economy mode auto discovers registered Vault Economy services, including direct
+  registrations; no provider means disabled, never silent internal fallback. Only
+  explicit sqlite mode selects the unchanged existing Phase 1 account balances.
+- Balance/pay/admin give/take/set, history, provider-separated statistics, pending/
+  cancel/resolve administration, shop, auctions and rotating rare black market.
+- Exact whole-unit parsing, no fractional YAML truncation, nonnegative integer
+  balances, overflow rollback, operation/leg replay validation and pinned providers.
+  SQLite money/order/mailbox commits are atomic. Legacy transactional cash changes
+  also record history without replacing the old economy contract or data.
+- External Vault operation ledger: durable APPLYING before API call, acknowledgments,
+  UNKNOWN on exceptions/interruption/amount mismatch, no uncertain replay, account
+  holds on new and already-queued payments, explicit audited reconciliation.
+- Saved PREPARED/TAGGED/CAPTURED item custody, authoritative frozen database payloads,
+  single-buyer auction reservations, confirmation/search/pagination, expiration and
+  exactly-once return mailbox sources. Full/offline inventories retain delivery.
+- Native custody guards cover inventories/cursor/crafting, item consumption, entity/
+  armor-stand use, placement/breaking, durability and outgoing use. They do not grant
+  incoming-damage immunity; tagged items are kept safely on death/respawn recovery.
+- Persistent time-based stock definitions and per-UUID purchase limits; fresh item
+  identities use existing canonical RewardFactory/Weapons factory and armor trims.
+- economy.yml, commands/descriptors/permissions/completion, independent versioned
+  teams/market SQLite migrations, operator guide, fixture/client sources and CI.
+No external economy API/JAR is bundled; Vault support uses its registered public
+contract and invokes provider methods on the appropriate Paper thread.
+
+EXECUTED LOCAL MAVEN
+Full reactor clean verify: BUILD SUCCESS. 148 tests, zero failures/errors/skips.
+Previous 104 preserved; new TeamTest 16 and MarketTest 28 cover:
+- UUID membership, case-insensitive names, invitation expiry/deny/capacity, racing
+  acceptance, role hierarchy/leadership, combat locks, creation cooldown/name reuse,
+  alliance consent/idempotency, friendly fire, war kill dedup/farming/wins, disband
+  during war, restart/schema checks, King hostile eligibility and diplomacy locks.
+- Exact parsing/config loading, unchanged account interpretation, whole-transfer
+  rollback/overflow, payment replay/immutable legs, atomic admin set, external
+  APPLYING restart quarantine, operator attestations, provider pins, uncertain
+  account/queued-payment holds, escrow prerequisites/owner/provider/frozen fields,
+  single-buyer concurrency, failed reservation release, expiry/return idempotency,
+  search/pagination, frozen stock/limits, failed sales, legacy audit rollback,
+  per-wallet history and newer-schema refusal.
+The build used the official existing Maven repositories and verified TLS; no
+repository/dependency substitution or certificate bypass was added.
+
+EXECUTED DISPOSABLE PAPER / SQLITE REAL CLIENTS
+New marked localhost-only server 127.0.0.1:25577; Paper 1.21.11 build 132;
+Temurin 21.0.13+9; Mineflayer 4.39.0. EULA acceptance for disposable test servers
+was explicitly authorized earlier in this session. Synthetic clients only.
+ALL TEAMS AND MARKET CLIENT CHECKS PASS (exit 0):
+- Explicit sqlite selection, admin-funded sample balances and player payment.
+- Invite/accept persistence, team chat, actual damage cancellation between members,
+  54-slot team GUI with shift extraction rejected.
+- Four diamonds removed from seller, listing activated, confirmed purchase, one
+  frozen receipt delivered to buyer, exact payment legs/balances audited.
+- Configured iron bundle bought and the completed receipt-tagged plain stack sold;
+  no internal tag mismatch, duplicate sale or negative balance.
+- Canonical legendary black-market item delivered; second purchase refused by
+  persisted per-rotation limit before charge.
+- Unsold emerald listing expired and returned once, with one delivered receipt.
+- Final account balances matched completed SQLite ledger legs exactly.
+
+EXECUTED REAL VAULT / ESSENTIALS INTEGRATION AND RESTART
+Official release downloads: Vault 1.7.3-b131 and EssentialsX 2.22.0; isolated test
+server only. Actual detected service: EssentialsX Economy / VaultEconomyProvider.
+ALL REAL VAULT INITIAL CHECKS PASS and ALL REAL VAULT RECOVERY CHECKS PASS (exit 0):
+- auto selected the real provider; initially zero external fixture balances were
+  not populated from SQLite. Existing SQLite balances 99900 and 30020 stayed intact.
+- Real provider give/pay/shop/admin set completed through the durable ledger.
+- A fixture performed one real seven-unit debit and deliberately omitted its ACK.
+  UNKNOWN held at 943; a normal stop/restart did not replay the debit. New payment
+  was refused while uncertain. Operator applied attestation finished the existing
+  operation without another withdrawal. A new intentional payment then completed
+  (external sample balances 942 and 91), while SQLite balances stayed unchanged.
+- Team memberships/friendly fire and the original auction payload/receipt survived
+  provider changes and restarts. No production data or third-party JAR is shipped.
+- Paper event probes rejected escrow entity/armor-stand interaction, consumption
+  and crafting output; final read-only GUIs and provider-separated statistics passed.
+These are actual provider API calls and real client tests, with a controlled lost-
+acknowledgement injection. They are not represented as a forced power-cut test.
+
+ERRORS FOUND / FIXED
+Automated tests exposed a listing SQL parameter binding error, a missing queued-
+account hold query and a history query showing both payment legs; all were fixed
+before passing verification. Frozen escrow values now come from SQLite rather than
+trusting a caller's mutable DTO. Configured fractional prices fail instead of being
+silently truncated. One initial Vault client run waited for an admin-set completion
+on the administrator instead of the target; the fixture was corrected and its
+synthetic provider accounts explicitly reinitialized via normal admin commands.
+The corrected complete run and separate recovery run passed. Preliminary failed
+runs are not represented as passing final runs. The offline Mojang public-key fetch
+warning from this isolated environment remains unrelated to these systems.
+
+LIMITS / UNFINISHED COMPATIBILITY WORK
+No automatic balance migration or conversion is implemented or authorized.
+Legacy bounty/King/world-event cash funding and payouts rely on the original
+single-SQLite-transaction interface. They work in explicitly selected sqlite mode;
+in Vault/disabled mode they remain held/rejected with old obligations preserved.
+This phase does not falsely insert external effects inside that transaction.
+Continuation for external legacy cash: add provider-pinned competition/treasury
+escrow funding and payout outboxes, distinguish historical SQLite obligations,
+and test mixed historical funding/recovery before enabling that bridge.
+New Phase 7 payments/shop/auction/black-market support the real Vault adapter.
+History/statistics cover PolderCore operations; Vault cannot expose all other
+plugins' transaction histories. Whole units preserve the existing denomination;
+external fractional balances are not rescaled. Provider/background writers prevent
+Vault from promising cross-system serializability; uncertain outcomes require an
+operator's verified attestation and are never guessed from the current balance.
+No third-party inventory synchronizer/claim-plugin matrix, load endurance test,
+native Windows Minecraft/Vault server or forced hardware-power-loss test was run.
+Normal Paper inventory persistence is assumed; independent player-data rollback or
+external duplication tools require coordinated integration. Prior Phase 2 serial
+registry/region-adapter unfinished work remains documented and is not reimplemented.
+All disposable worlds, databases, test account records and logs are retained;
+servers stop normally. Fixtures are excluded from production builds. No Phase 8.
+
+Final native privacy/event probe: TEAM CHAT MEMBERSHIP LOSS PRIVACY PASS and
+FINAL PAPER ESCROW GUARDS AND GUI CHECKS PASS (exit 0). Kicked-member text was not
+published globally; membership was restored. Last raw SQLite audit confirmed the
+original balances, two members and zero UNKNOWN operations. Paper stopped normally.
+
+ACTUAL GITHUB ACTIONS RESULT
+Phase 7 run 43460994072 completed successfully on commit 1e79b98:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43460994072
+Linux core job 132007534430 and Windows job 132007534948 each passed 148 tests
+(11 Common + 137 Core), zero failures/errors/skips. BUILD SUCCESS in both logs.
+Windows also passed the existing maintenance wrapper synthetic init/archive/
+recovery sequence. PolderCore-Phase7, phase7-tests and phase7-windows-tests uploaded.
+Native Paper/client/Vault checks described above ran locally, not as invented CI
+server tests. Review: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/6

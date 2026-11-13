@@ -102,6 +102,14 @@ public final class LootStore {
         });
   }
 
+  /** Shared transaction boundary for trades; caller owns commit/rollback. */
+  public static boolean enqueueInTransaction(Connection c, Parcel reward, String source, long now)
+      throws SQLException {
+    if (count(c, "SELECT COUNT(*) FROM loot_parcels WHERE source=?", source) > 0) return false;
+    parcel(c, reward, source, now);
+    return true;
+  }
+
   public CompletableFuture<Boolean> enqueue(Parcel reward, String source, long now) {
     return tx(
         c -> {

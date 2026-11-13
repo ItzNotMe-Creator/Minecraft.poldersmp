@@ -55,8 +55,8 @@ public final class Competitions implements Listener, TabExecutor, AutoCloseable 
       plugin
           .getLogger()
           .info(
-              "Competitions use the existing Phase 1 ledger; Vault balances are not mirrored or"
-                  + " converted.");
+              "Competition cash uses the transactional Economy service. Legacy SQLite balances"
+                  + " are never mirrored into Vault; cash is held unless sqlite mode is selected.");
     store
         .migrate()
         .thenCompose(v -> store.active())
@@ -202,6 +202,8 @@ public final class Competitions implements Listener, TabExecutor, AutoCloseable 
     for (Player p : arena.getWorld().getPlayers())
       if (eligible(p) && p.getLocation().distanceSquared(arena) <= radius * radius)
         players.add(p.getUniqueId());
+    var teams = Bukkit.getServicesManager().load(nl.poldersmp.core.teams.Teams.class);
+    if (teams != null && !teams.kingEligible(players)) players.clear();
     return players;
   }
 
@@ -500,6 +502,8 @@ public final class Competitions implements Listener, TabExecutor, AutoCloseable 
   }
 
   private boolean teammates(Player a, Player b) {
+    var teams = Bukkit.getServicesManager().load(nl.poldersmp.core.teams.Teams.class);
+    if (teams != null && teams.friendly(a.getUniqueId(), b.getUniqueId())) return true;
     var team = a.getScoreboard().getEntryTeam(a.getName());
     var reverse = b.getScoreboard().getEntryTeam(b.getName());
     return team != null && team.hasEntry(b.getName())

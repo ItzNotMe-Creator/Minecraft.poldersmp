@@ -77,3 +77,52 @@ The Windows CI compiles it separately, invokes the actual PowerShell apply/recov
 wrapper, verifies the stored old seed and checks primary fixture files. Production
 Maven excludes all integration fixture classes. Selected live pass markers are in
 `nether-verification.txt`; no production world is used in these tests.
+
+## Teams / economy / real Vault probes
+
+`java/nl/poldersmp/core/market/MarketLiveProbe.java` with
+`market-probe-plugin.yml` is a separate localhost-only fixture for Paper 1.21.11,
+Java 21 and offline test clients MarketAlice/MarketBob. It refuses a missing
+`.polder-disposable-test` marker and a non-loopback binding. Never install it on
+production: setup changes a small high platform and its synthetic clients' items.
+Compile/package with the Core/API classpath procedure used above, substituting
+MarketLiveProbe names. Integration sources are excluded from the production JAR.
+
+Use a new isolated server at 127.0.0.1:25577, accept the Minecraft EULA for that
+server, install the fixture and Core, explicitly select `mode: sqlite` and shorten
+only that fixture's auction listing-seconds to 30. Make both test clients operators.
+Run `client/market-client.js` using the existing pinned Mineflayer dependencies;
+optional `POLDER_MARKET_START_FILE` delays actions until operator setup is ready.
+It verifies payments, team invite/accept/chat/friendly fire, 54-slot extraction
+protection, auction custody/payment/receipt, shop buy/sell, black-market limits,
+expiry returns and balance/ledger consistency. It expects fresh fixture data;
+it never deletes a world/database to hide an earlier run.
+
+For Vault testing, use official Vault 1.7.3 and EssentialsX 2.22.0 releases in the
+**isolated** server only, set the sample provider's starting balance to zero and
+select `mode: auto`. Preserve the existing SQLite balances. These third-party JARs
+are not included in PolderCore or build artifacts. Use namespaced Core commands so
+an Essentials command alias cannot bypass the tested ledger.
+
+`vault-client.js` verifies provider selection without importing SQLite funds,
+real give/pay/shop/set calls, membership restart persistence and a deliberately
+injected lost-acknowledgement debit. `POLDER_VAULT_OPERATION_FILE` selects the saved
+operation-ID file (default `work/vault-operation.txt`, relative to the launch cwd).
+If a fixture run must be repeated, reinitialize only its synthetic provider accounts
+explicitly through admin commands; never reset real accounts. The injected call
+really debits seven units but deliberately omits acknowledgement. It is a controlled
+fault injection, not a claim of forced JVM/power-loss testing.
+
+Stop normally, restart, and run `vault-recovery-client.js` with that operation file.
+It checks the debit was not replayed, affected-account payments are held, explicit
+applied attestation makes no second withdrawal, a subsequent payment succeeds, and
+Foundation balances/old item receipts remain unchanged. `market-guards-client.js`
+checks the final Paper event guards for armor-stand/entity use, consumption and
+crafting, read-only GUIs, statistics and private-chat handling after a member is
+kicked; it restores the test membership. Its known synthetic balances reflect the
+preceding completed scenario. The event probes exercise real Paper handlers;
+they do not claim an exhaustive packet/third-party plugin matrix.
+
+Selected actual pass markers are in `market-verification.txt`. Retain the complete
+private server/client logs when reproducing. All worlds, accounts and receipt data
+from the executed tests were retained, with normal server stops between runs.

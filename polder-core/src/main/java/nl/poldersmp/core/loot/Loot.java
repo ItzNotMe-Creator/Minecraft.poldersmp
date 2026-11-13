@@ -211,6 +211,14 @@ public final class Loot implements Listener, TabExecutor, AutoCloseable {
   }
 
   /** Event integrations prepare frozen payloads on the Paper thread, then persist their outbox. */
+  public boolean canTrade(Player player) {
+    return ready && !busy(player) && !hasLockedInventory(player);
+  }
+
+  public LootStore.Parcel prepareItem(UUID owner, ItemStack item) {
+    return parcel(owner, item.clone(), System.currentTimeMillis());
+  }
+
   public LootStore.Parcel prepareReward(UUID owner, LootRules.Tier tier) {
     return reward(owner, select(tier, false), System.currentTimeMillis());
   }

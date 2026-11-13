@@ -12,6 +12,8 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
   private nl.poldersmp.core.loot.Loot loot;
   private nl.poldersmp.core.events.EventManager worldEvents;
   private nl.poldersmp.core.nether.NetherManager nether;
+  private nl.poldersmp.core.teams.Teams teams;
+  private nl.poldersmp.core.market.MarketManager market;
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
@@ -54,6 +56,19 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
                           () -> {
                             if (isEnabled()) {
                               try {
+                                teams = new nl.poldersmp.core.teams.Teams(this, database);
+                              } catch (RuntimeException error) {
+                                getLogger().severe("Teams startup failed: " + error);
+                              }
+                              try {
+                                market =
+                                    new nl.poldersmp.core.market.MarketManager(
+                                        this, database, weapons);
+                              } catch (RuntimeException error) {
+                                getLogger()
+                                    .severe("Economy startup failed (cash gate closed): " + error);
+                              }
+                              try {
                                 competitions =
                                     new nl.poldersmp.core.competition.Competitions(this, database);
                               } catch (RuntimeException error) {
@@ -84,6 +99,8 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
 
   @Override
   public void onDisable() {
+    if (market != null) market.close();
+    if (teams != null) teams.close();
     if (nether != null) nether.close();
     if (worldEvents != null) worldEvents.close();
     if (loot != null) loot.close();

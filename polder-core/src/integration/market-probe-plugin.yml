@@ -1,0 +1,11 @@
+name: MarketLiveProbe
+version: 1.0
+main: nl.poldersmp.core.market.MarketLiveProbe
+api-version: '1.21.11'
+depend: [PolderCore]
+commands:
+  marketprobe:
+    permission: marketprobe.admin
+permissions:
+  marketprobe.admin:
+    default: op

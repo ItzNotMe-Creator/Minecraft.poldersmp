@@ -630,3 +630,13 @@ Final native privacy/event probe: TEAM CHAT MEMBERSHIP LOSS PRIVACY PASS and
 FINAL PAPER ESCROW GUARDS AND GUI CHECKS PASS (exit 0). Kicked-member text was not
 published globally; membership was restored. Last raw SQLite audit confirmed the
 original balances, two members and zero UNKNOWN operations. Paper stopped normally.
+
+ACTUAL GITHUB ACTIONS RESULT
+Phase 7 run 43460994072 completed successfully on commit 1e79b98:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43460994072
+Linux core job 132007534430 and Windows job 132007534948 each passed 148 tests
+(11 Common + 137 Core), zero failures/errors/skips. BUILD SUCCESS in both logs.
+Windows also passed the existing maintenance wrapper synthetic init/archive/
+recovery sequence. PolderCore-Phase7, phase7-tests and phase7-windows-tests uploaded.
+Native Paper/client/Vault checks described above ran locally, not as invented CI
+server tests. Review: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/6

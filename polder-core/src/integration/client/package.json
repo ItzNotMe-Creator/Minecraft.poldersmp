@@ -2,6 +2,6 @@
   "name": "polder-loot-integration-client",
   "private": true,
   "version": "1.0.0",
-  "scripts": { "probe": "node loot-client.js", "events": "node events-client.js", "nether": "node nether-client.js" },
+  "scripts": { "probe": "node loot-client.js", "events": "node events-client.js", "nether": "node nether-client.js", "market": "node market-client.js", "vault": "node vault-client.js", "vault-recovery": "node vault-recovery-client.js" },
   "dependencies": { "mineflayer": "4.39.0" }
 }

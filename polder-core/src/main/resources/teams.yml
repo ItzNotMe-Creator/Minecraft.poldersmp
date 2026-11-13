@@ -1,0 +1,16 @@
+enabled: true
+maximum-teams: 250
+maximum-members: 10
+maximum-outgoing-invitations: 20
+maximum-incoming-invitations: 3
+invitation-seconds: 300
+creation-cooldown-seconds: 86400
+combat-seconds: 30
+kill-farming-seconds: 300
+war-seconds: 3600
+relation-request-seconds: 600
+allied-friendly-fire: false
+king-require-hostile-teams: true
+sounds: true
+particles: true
+gui-title: PolderSMP Teams

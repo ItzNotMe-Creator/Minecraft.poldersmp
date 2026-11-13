@@ -3,7 +3,7 @@ version: 1.0.0-SNAPSHOT
 main: nl.poldersmp.core.PolderCore
 softdepend: [Vault, LuckPerms]
 api-version: '1.21.11'
-description: PolderSMP foundation and Phase 2 gameplay
+description: PolderSMP survival systems
 commands:
   poldercore:
     description: PolderCore administration
@@ -46,6 +46,20 @@ commands:
     description: Managed Nether countdown and status
   netheradmin:
     description: Request, pause or resume Nether maintenance
+  team:
+    description: Persistent teams, diplomacy and chat
+  balance:
+    description: Balance and transaction history
+  pay:
+    description: Pay a known player or UUID
+  shop:
+    description: Configured shop and item sales
+  ah:
+    description: Auctions, listings and search
+  blackmarket:
+    description: Rotating rare stock
+  eco:
+    description: Economy administration and reconciliation
 permissions:
   poldercore.info:
     default: op
@@ -101,3 +115,17 @@ permissions:
     default: true
   polder.nether.admin:
     default: op
+  polder.team.use:
+    default: true
+  polder.economy.balance:
+    default: true
+  polder.economy.pay:
+    default: true
+  polder.economy.admin:
+    default: op
+  polder.shop.use:
+    default: true
+  polder.auction.use:
+    default: true
+  polder.blackmarket.use:
+    default: true

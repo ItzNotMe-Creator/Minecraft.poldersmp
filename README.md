@@ -1,4 +1,4 @@
-# PolderSMP — Phase 1 foundation
+# PolderSMP
 
 Four-module Java 21 / Maven project. This repository was empty when cloned; this
 foundation was created with the owner's permission. No previous implementations,
@@ -550,3 +550,29 @@ persist in `plugins/PolderCore/nether-reset.db`, with a versioned independent
 migration. Phase 6 CI packages the JAR/configuration/source/operator scripts and
 runs Linux and Windows maintenance checks. See BUILD-REPORT.txt for actual test
 results and limits. Phase 7 is not implemented.
+
+## Phase 7: teams and economy
+
+PolderCore adds persistent UUID teams, leader/officer/member roles, invitations,
+private chat, friendly fire, consensual alliances/wars, rivalries, statistics and
+paginated team GUIs. `teams.yml` controls limits, combat locks, effects and King
+eligibility. Team/ally membership now protects bounty anti-farming, legendary
+weapon damage and King participant eligibility without replacing scoreboards.
+
+`economy.yml` defaults to `auto`: use an existing Vault provider if registered,
+otherwise keep money features unavailable. Explicitly choose `sqlite` to continue
+using the unchanged Phase 1 balances and transactional competition cash. Nothing
+imports, merges or rescales real balances. Prices/payments use exact whole units.
+
+Commands include `/team`, `/balance [history]`, `/pay`, `/shop`, `/ah`,
+`/blackmarket` and `/eco`. Shop and auction item escrow saves removal before use;
+purchases and expired returns use the existing durable mailbox. Rotating rare
+stock and per-UUID limits survive restart. Vault effects use an operation ledger:
+uncertain calls hold affected accounts until explicit operator reconciliation.
+
+Read [the Phase 7 operator guide](docs/TEAMS-ECONOMY.md) for all commands,
+permissions, configuration, escrow/recovery guarantees, provider selection and
+limits. Legacy bounty/King/event cash uses the SQLite transaction contract and is
+held in Vault mode; it is never silently converted into external balances.
+The Phase 7 build packages the Core JAR, defaults, source, maintenance scripts and
+test reports. See BUILD-REPORT.txt for actual verification. Phase 8 is not added.

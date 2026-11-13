@@ -1,6 +1,6 @@
 # PolderSMP
 
-Four-module Java 21 / Maven project. This repository was empty when cloned; this
+Five-module Java 21 / Maven project (including standalone PolderCinematics). This repository was empty when cloned; this
 foundation was created with the owner's permission. No previous implementations,
 build reports, or tests were present to preserve.
 
@@ -18,9 +18,10 @@ Run `mvn -B -U clean verify` from the repository root. Outputs:
 
 - `polder-core/target/PolderCore.jar`
 - `polder-lobby/target/PolderLobby.jar`
+- `polder-cinematics/target/PolderCinematics.jar`
 - `polder-velocity/target/PolderVelocity.jar`
 
-GitHub Actions runs the same reactor build and uploads the three shaded plugins
+GitHub Actions runs the same reactor build and uploads the shaded plugins
 and test reports. `python3 scripts/package.py` also produces `dist/` with
 individual JARs, source and configuration ZIPs, and SHA-256 checksums. The shared module and SQLite driver are bundled; server APIs
 are provided by the host and must not be bundled. Snapshots are resolved from
@@ -576,3 +577,24 @@ limits. Legacy bounty/King/event cash uses the SQLite transaction contract and i
 held in Vault mode; it is never silently converted into external balances.
 The Phase 7 build packages the Core JAR, defaults, source, maintenance scripts and
 test reports. See BUILD-REPORT.txt for actual verification. Phase 8 is not added.
+
+
+## Phase 8: Ultimate Lobby expansion
+
+PolderLobby now contains configurable internal modules for parkour, daily rewards,
+cosmetics, gadgets, secrets, challenges, portals, NPC actions, cached holograms,
+profiles, unified menus and welcome effects. PolderCinematics is an independent
+Paper plugin with persisted recovery, waypoint camera paths, previews and skipping.
+Neither needs PolderCore on the lobby. All existing phases remain in place.
+
+Read [the lobby setup guide](docs/LOBBY.md), [official Phase 8 specification](docs/PHASE8-SPEC.md)
+and [additive roadmap / Phase 10 packaging plan](docs/ROADMAP.md). Spawn coordinates
+are intentionally unset. Phase 9 proxy integration is deferred; absent trusted
+status/access providers, transfers fail closed and shared network data says unavailable.
+Cosmetic tokens are noncash lobby progress, separate from SMP player balances.
+
+Build the full reactor with `mvn -B -U clean verify`, then run
+`python scripts/package-lobby.py` for a Phase 8 review ZIP, source ZIP and checksums.
+The Phase 8 GitHub Actions workflow builds all modules on Linux and Windows and
+uploads these artifacts plus test reports. This is not the Phase 10 USB installer.
+See BUILD-REPORT.txt for executed tests and remaining acceptance limitations.

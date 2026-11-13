@@ -11,6 +11,7 @@
     <module>polder-common</module>
     <module>polder-core</module>
     <module>polder-lobby</module>
+    <module>polder-cinematics</module>
     <module>polder-velocity</module>
   </modules>
 

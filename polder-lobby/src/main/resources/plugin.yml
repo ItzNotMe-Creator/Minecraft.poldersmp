@@ -2,4 +2,28 @@ name: PolderLobby
 version: 1.0.0-SNAPSHOT
 main: nl.poldersmp.lobby.PolderLobby
 api-version: '1.21.11'
-description: PolderSMP Phase 1 foundation
+description: PolderSMP configurable lobby experience
+softdepend: [PolderCinematics, PlaceholderAPI, LuckPerms, Citizens, DecentHolograms]
+commands:
+  lobby: {description: Open the lobby menu, permission: polder.lobby.use}
+  lobbyadmin: {description: Configure lobby modules, permission: polder.lobby.admin}
+  parkour: {description: Courses and records, permission: polder.lobby.parkour}
+  daily: {description: Daily cosmetic reward, permission: polder.lobby.daily}
+  profile: {description: Player profile, permission: polder.lobby.profiles}
+  cosmetics: {description: Cosmetic shop, permission: polder.lobby.cosmetics}
+  gadgets: {description: Select a lobby gadget, permission: polder.lobby.gadgets}
+  lobbyevent: {description: Lobby challenges, permission: polder.lobby.events}
+permissions:
+  polder.lobby.use: {default: true}
+  polder.lobby.selector: {default: true}
+  polder.lobby.portals: {default: true}
+  polder.lobby.parkour: {default: true}
+  polder.lobby.gadgets: {default: true}
+  polder.lobby.cosmetics: {default: true}
+  polder.lobby.secrets: {default: true}
+  polder.lobby.daily: {default: true}
+  polder.lobby.profiles: {default: true}
+  polder.lobby.npcs: {default: true}
+  polder.lobby.events: {default: true}
+  polder.lobby.admin: {default: op}
+  polder.lobby.build: {default: op}

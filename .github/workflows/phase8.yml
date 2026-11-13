@@ -1,0 +1,35 @@
+name: Phase 8 Ultimate Lobby build
+on:
+  push:
+    branches: ['phase8/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - run: mvn -B -U clean verify
+      - run: python scripts/package-lobby.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PolderSMP-Phase8-${{ matrix.os }}
+          path: dist/phase8/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase8-tests-${{ matrix.os }}
+          path: '**/target/surefire-reports/*'

@@ -1,0 +1,5 @@
+# Admin registration never changes terrain or creates fake player entities.
+portals: {}
+holograms: {}
+secrets: {}
+npcs: {}

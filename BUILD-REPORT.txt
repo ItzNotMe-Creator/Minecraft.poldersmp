@@ -640,3 +640,112 @@ Windows also passed the existing maintenance wrapper synthetic init/archive/
 recovery sequence. PolderCore-Phase7, phase7-tests and phase7-windows-tests uploaded.
 Native Paper/client/Vault checks described above ran locally, not as invented CI
 server tests. Review: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/6
+
+PHASE 8 — ULTIMATE LOBBY EXPANSION (2026-11-13, review / acceptance pending)
+
+Preserved all Phase 1–7 sources, data contracts and dependency version targets.
+Added the fifth Maven module polder-cinematics, producing PolderCinematics.jar.
+PolderLobby contains twelve independently switchable internal modules: portals,
+parkour, gadgets, holograms, cosmetics, secrets, daily, selector, NPC actions,
+profiles, mini-events and welcome. Neither lobby plugin needs PolderCore.
+Java 21 / Paper 1.21.11 / Velocity 3.4.0 targets remain unchanged.
+
+Implemented standalone journaled camera paths, four configurable scenes, linear/
+Catmull-Rom curves, easing, read-only waypoint editor, preview/skip, bounded async
+chunk preparation, activity ownership, safe landing/state restoration, and
+persisted first/every/network-session eligibility. Unsafe restoration retains its
+recovery journal. Master database-disabled configuration refuses persistent
+activities. Module startup/reload does not manufacture or overwrite coordinates.
+
+Lobby persistence has independent version-1 migrations and asynchronous SQLite
+work. UUID profiles/playtime, immutable display caches, atomic daily/streak and
+secret claims, unique parkour completion rewards, personal bests, cosmetic
+unlocks/selections, and event state/scheduling/rewards are persisted. Tokens are
+noncash cosmetic progress only: no SMP balance imports, transfers or replacement
+currency. Menus are protected 54-slot inventories. Navigation items preserve
+unrelated inventory contents. Visual hats/titles/pets never replace equipment or
+LuckPerms metadata. Timed races/treasure/collectible hunts use persistent event
+finalization. Restart interrupts unfinished events without guessed payouts.
+
+Established plugin adapters are optional: real PlaceholderAPI 2.11.6 expansion,
+cached LuckPerms group reads, existing Citizens NPC IDs/action bindings, and
+DecentHolograms API with owned TextDisplay fallback. No unsafe fake NPC players.
+NetworkBridge is a JDK-only trusted service contract for Phase 9. Missing, stale,
+locked, offline, failed or malformed status denies transfers. Execution requires
+an access-checked transfer capability; there is no direct backend Connect fallback.
+No production Phase 9 proxy implementation was added.
+
+LOCAL BUILD: full six-project reactor `clean verify` executed successfully on
+Java 21.0.13+9 / Maven 3.9.11. 171 tests: Common 11, existing Core 137, Lobby 17,
+Cinematics 6; zero failures, errors or skipped tests. The 23 new tests exercise
+concurrent daily claims, backward dates, timezone boundary, atomic purchases,
+unlock/selection restart persistence, reward/run/event idempotency, checkpoint
+ordering, timers, activity exclusivity, bounded provider data, fail-closed access,
+event winners/minimum participants, migration refusal, journal restart/recovery,
+camera geometry/yaw/easing and default configuration. Real compiled Core, Lobby,
+Cinematics and Velocity JARs exist. Official Paper and PlaceholderAPI dependency
+downloads succeeded with TLS verification; no 403 workaround or server API version
+upgrade was introduced. The official new repository is
+https://repo.extendedclip.com/releases/ (me.clip:placeholderapi:2.11.6, provided).
+
+NATIVE PAPER / PROTOCOL CLIENT CHECKS ACTUALLY EXECUTED:
+Disposable loopback Paper 1.21.11 build 132, Java 21, port 25578, fresh marked
+world, no PolderCore. Full LobbyGus smoke client exited successfully:
+- Spectator entry/exclusive activity, skip, complete camera position stream,
+  safe Survival landing, original unrelated diamonds preserved.
+- Protected 54-slot GUI, daily duplicate rejection and permission-hidden command.
+- Missing-provider selector denial; actual movement through parkour checkpoint
+  and finish; teleport cancels the run.
+- Atomic first-course + daily tokens (10), secret reward, real pet entity select/
+  removal (one then zero), disconnect during intro/reconnect restoration.
+- Final persisted audit: 92 cosmetic tokens, streak 1, course record retained.
+A normal Paper restart retained the same profile/record and restored the new
+intro; restart client exited successfully. Two clients joined and ran introductions
+concurrently during the restart/network smoke cycle; this is a small smoke check,
+not a large-player endurance benchmark.
+
+Follow-up LobbyNetwork client also exited successfully with real PlaceholderAPI
+2.11.6 installed: native fallback status hologram, physical portal denial without
+a provider, synthetic trusted-provider locked/offline/failure cases (zero transfer
+calls), online access-checked request (one call), later provider failure (still one
+call), rejected invalid timezone reload while live menu kept working, restored
+valid reload, actual race and collectible event winner/reward flows (27 tokens),
+and real PlaceholderAPI resolution `27:Player`. The synthetic service exists only
+in the excluded test fixture; it is not a proxy implementation. Both databases
+passed SQLite integrity_check, with zero pending intro journals after the full
+normal-disconnect cycle. Test worlds/profiles/logs remain intact. Third-party
+public-key/update fetches in the isolated server logged auxiliary network failures;
+local plugin functions and the PlaceholderAPI expansion still ran successfully.
+
+Fixture failures discovered and corrected before the passing runs: mismatched
+parkour reward YAML key (zero reward), optional PlaceholderAPI field linkage under
+reflection, incorrect yaw test expectation, and smoke-client permission-message,
+command pacing and reconnect timing assumptions. Failed profile data was retained;
+passing full runs used fresh UUIDs. No failed attempt is reported as a passing test.
+
+Packaging: scripts/package-lobby.py creates a Phase 8 review bundle with the four
+real shaded JARs in their Phase 10 planned server/plugin paths, default configs,
+complete tracked source ZIP and SHA-256 checksums. It excludes worlds/live data
+and refuses missing JARs/descriptors. This is not the Phase 10 USB installer.
+.github/workflows/phase8.yml runs the full reactor and packages/upload artifacts on
+both Linux and Windows. Actual CI results will be recorded after the push.
+
+REMAINING ACCEPTANCE / EXACT CONTINUATION TASK:
+1. On an unmodified graphical Minecraft Java 1.21.11 client, configure a real
+   lobby path with four scenes, preview linear and Catmull-Rom/easing, skip in each
+   scene, reconnect mid-scene, and record framing, camera smoothness and comfort.
+   Protocol position packets do not verify graphical rendering. This check has
+   not been performed, so Phase 8 is not declared fully accepted.
+2. On a separate marked disposable lobby, install compatible real Citizens and
+   DecentHolograms builds, record their versions, bind/test all five NPC actions,
+   test live hologram updates and cleanup/restart. Missing Citizens and native
+   TextDisplay fallback were tested; actual Citizens/Decent compatibility is pending.
+3. Run a multi-player endurance/load trial at the configured visual cap, including
+   reload/disconnect/parkour with existing protection/permissions plugins. Only
+   two concurrent clients have been tested; no native Windows Paper/client run or
+   forced hardware-power-loss trial was performed.
+4. Preserve all prior unfinished work listed above. Phase 9 is explicitly deferred;
+   implement/authenticate its provider before advertising reliable network transfers.
+   Phase 10 still owns the USB installer/launcher deployment acceptance.
+See docs/PHASE8-SPEC.md, docs/ROADMAP.md, docs/LOBBY.md and the excluded integration
+fixture guide for setup, safety boundaries, commands, configuration and test steps.

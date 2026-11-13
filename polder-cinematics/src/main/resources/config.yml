@@ -1,0 +1,20 @@
+enabled: true
+# FIRST_JOIN / EVERY_JOIN / NETWORK_SESSION. Missing session provider uses FIRST_JOIN.
+mode: FIRST_JOIN
+delay-ticks: 30
+duration-seconds: 12
+curve: CATMULL_ROM
+easing: SMOOTHSTEP
+maximum-chunks: 32
+sounds: true
+particles: true
+skip-marks-seen: true
+# Record real positions with /joinintro setspawn and /joinintro addpoint.
+spawn: {}
+points: []
+scenes:
+  - 'Welcome above PolderSMP'
+  - 'Explore the lobby'
+  - 'PolderSMP awaits'
+  - 'Your adventure starts here'
+subtitle: 'Use /joinintro skip at any time'

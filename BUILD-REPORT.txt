@@ -779,3 +779,26 @@ Phase 8 implementation is buildable/reviewable; graphical and third-party
 acceptance remains pending as described above. No Phase 9 or Phase 10 work was
 claimed complete. The final documentation-only commit records these actual
 results and native lifecycle evidence; its workflow results are separate runs.
+
+FINAL HOLOGRAM OWNERSHIP SAFEGUARD
+Final review identified a possible optional DHAPI name collision during exception
+cleanup. Replaced name-only ownership with exact created-instance identity checks.
+Existing names and other plugins' replacements are preserved. Missing update APIs
+fail explicitly; cleanup removes only confirmed owned instances. Successful return
+from fallback to DHAPI removes the plugin's old native display. Four additional
+regression tests exercise pre-existing names, owned updates/deletion, replacement
+before update or cleanup, and a missing setter API. These tests use an isolated
+synthetic API, not an invented real DecentHolograms compatibility result.
+The local full reactor passed 175 tests (Common 11, Core 137, Lobby 21, Cinematics
+6), zero failures/errors/skips. A focused Common/Lobby verification follows the
+last fallback-cleanup adjustment; the final CI will run all 175 tests again.
+The earlier recorded CI runs correctly contain 171 tests, before this safeguard.
+Focused final Common/Lobby verify executed successfully: 32 tests, no failures,
+errors or skips. Confirmed class timestamps include the last source adjustment.
+The final rebuilt Lobby JAR then loaded on disposable Paper with Cinematics and
+real PlaceholderAPI. Native status TextDisplay and real placeholder resolution
+passed again (`0:Player`); the server stopped normally. Thus the fallback is
+verified on Paper, while actual DecentHolograms integration remains pending.
+The broader client acceptance should also exercise all five gadget animations/
+movement interactions against the intended lobby build and protection plugins;
+that full graphical/physics matrix has not been performed in this cloud session.

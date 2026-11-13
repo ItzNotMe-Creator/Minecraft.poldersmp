@@ -229,3 +229,14 @@ Pending acceptance must be reported honestly: graphical Minecraft camera review,
 third-party NPC/hologram compatibility matrix, large-player endurance and real
 Phase 9 proxy integration. Do not treat protocol clients as a graphical camera
 sign-off or enable unsupported integrations based solely on successful compilation.
+
+### Hologram ownership safety
+
+The DecentHolograms adapter records exact instances returned by successful
+creation. A pre-existing `polderlobby_<id>` name or a replacement created by
+another plugin is preserved; the lobby logs a collision and uses its own native
+fallback. Rename the lobby location to resolve the collision. Updates/cleanup
+never assume that a matching name proves ownership. An incompatible update API
+fails explicitly and cleans only confirmed owned instances. Regression tests use
+a synthetic API to verify these rules; real DecentHolograms compatibility remains
+an operator acceptance step.

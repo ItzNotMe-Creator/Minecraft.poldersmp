@@ -16,8 +16,8 @@ final class LobbyLocations implements Listener {
   private final PolderLobby p;
   private final NamespacedKey tag;
   private final Map<String, TextDisplay> displays = new HashMap<>();
-  private final Set<String> external = new HashSet<>();
-  private Class<?> dh;
+  private final Set<String> conflicts = new HashSet<>();
+  private HologramAdapter dh;
   private final Map<UUID, String> inside = new HashMap<>();
   private final Set<String> pending = new HashSet<>();
   private List<String> parkourTop = List.of("No records yet");
@@ -111,8 +111,12 @@ final class LobbyLocations implements Listener {
     if (plugin != null && plugin.isEnabled())
       try {
         dh =
-            Class.forName(
-                "eu.decentsoftware.holograms.api.DHAPI", true, plugin.getClass().getClassLoader());
+            new HologramAdapter(
+                Class.forName(
+                    "eu.decentsoftware.holograms.api.DHAPI",
+                    true,
+                    plugin.getClass().getClassLoader()),
+                p.getLogger()::warning);
       } catch (Exception e) {
         p.getLogger().warning("DecentHolograms API unavailable; using bounded TextDisplays");
       }
@@ -269,31 +273,23 @@ final class LobbyLocations implements Listener {
       String name = "polderlobby_" + id;
       if (dh != null)
         try {
-          if (external.add(name))
-            dh.getMethod("createHologram", String.class, Location.class, boolean.class, List.class)
-                .invoke(null, name, loc, false, text);
-          else {
-            Object holo = dh.getMethod("getHologram", String.class).invoke(null, name);
-            if (holo != null)
-              for (var method : dh.getMethods())
-                if (method.getName().equals("setHologramLines")
-                    && method.getParameterCount() == 2
-                    && method.getParameterTypes()[1] == List.class) {
-                  method.invoke(null, holo, text);
-                  break;
-                }
+          if (dh.render(name, loc, text)) {
+            TextDisplay fallback = displays.remove(id);
+            if (fallback != null) fallback.remove();
+            continue;
           }
-          continue;
+          if (conflicts.add(name))
+            p.getLogger()
+                .warning(
+                    "Existing hologram preserved: "
+                        + name
+                        + "; rename this lobby location or use its native fallback.");
         } catch (Exception e) {
           p.getLogger()
               .warning(
                   "Hologram integration failed, using TextDisplay: "
                       + e.getClass().getSimpleName());
-          try {
-            dh.getMethod("removeHologram", String.class).invoke(null, name);
-          } catch (Exception ignored) {
-          }
-          external.remove(name);
+          dh.close();
           dh = null;
         }
       TextDisplay display = displays.get(id);
@@ -313,13 +309,8 @@ final class LobbyLocations implements Listener {
   void cleanup() {
     displays.values().forEach(Entity::remove);
     displays.clear();
-    if (dh != null)
-      for (String name : external)
-        try {
-          dh.getMethod("removeHologram", String.class).invoke(null, name);
-        } catch (Exception ignored) {
-        }
-    external.clear();
+    if (dh != null) dh.close();
+    conflicts.clear();
   }
 
   @EventHandler

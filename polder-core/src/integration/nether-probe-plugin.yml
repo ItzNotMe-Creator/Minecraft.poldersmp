@@ -1,0 +1,11 @@
+name: NetherLiveProbe
+version: 1.0
+main: nl.poldersmp.core.nether.NetherLiveProbe
+api-version: '1.21.11'
+depend: [PolderCore]
+commands:
+  netherprobe:
+    permission: netherprobe.admin
+permissions:
+  netherprobe.admin:
+    default: op

@@ -11,6 +11,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
   private nl.poldersmp.core.competition.Competitions competitions;
   private nl.poldersmp.core.loot.Loot loot;
   private nl.poldersmp.core.events.EventManager worldEvents;
+  private nl.poldersmp.core.nether.NetherManager nether;
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
@@ -29,6 +30,11 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
     if (!settings.enabled()) {
       getLogger().info("Foundation module disabled in configuration");
       return;
+    }
+    try {
+      nether = new nl.poldersmp.core.nether.NetherManager(this);
+    } catch (Exception error) {
+      getLogger().severe("Nether startup refused: " + error);
     }
     weapons = new nl.poldersmp.core.gameplay.Weapons(this);
     armor = new nl.poldersmp.core.gameplay.Armor(this);
@@ -78,6 +84,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
 
   @Override
   public void onDisable() {
+    if (nether != null) nether.close();
     if (worldEvents != null) worldEvents.close();
     if (loot != null) loot.close();
     if (competitions != null) competitions.close();

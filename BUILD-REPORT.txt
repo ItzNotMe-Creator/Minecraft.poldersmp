@@ -380,3 +380,120 @@ Job 128750467516: BUILD SUCCESS, 11 Common + 65 Core tests, no failures/errors/s
 PolderCore-Phase5 and phase5-tests artifacts uploaded successfully. This CI ran
 Maven/tests; the real Paper/client/restart checks described above ran locally.
 Review PR: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/4
+
+PHASE 6 - AUTOMATIC MANAGED NETHER RESET (2026-11-13)
+Branch: phase6/nether-reset, based on phase5/world-events. No Phase 7.
+Paper 1.21.11 build 132 / Java 21; existing API/dependency versions preserved.
+
+IMPLEMENTED / VERIFIED APPROACH
+Paper's inspected CraftServer.createWorld constructs new WorldOptions from
+WorldCreator.seed only for a new world; existing level.dat supplies saved options.
+Observed Paper Nether storage: <world>/DIM-1 with level.dat/uid.dat at world root.
+The implementation uses a separate owned polder_nether world, environment NETHER,
+with WorldCreator.seed and generated structures enabled. It preserves the existing
+primary Nether and routes player/entity Nether portals to the managed dimension.
+The Overworld and End are excluded by exact path, environment/layout and identity
+checks. No claim is made that YAML edits regenerate an existing primary dimension.
+
+FEATURES
+- Default interval 120 real-world hours, last success/next deadline, pause state,
+  maintenance phases, operation UUID, warning receipts and history in independent
+  versioned nether-reset.db. Concurrent/stale/duplicate requests are rejected.
+- Warnings at 30/10/5/1 minutes and 10 seconds. Access closes before evacuation;
+  failed/cancelled teleports or unsafe Overworld destination block shutdown.
+  Players/worlds save; the module never unloads/deletes a live world. Saved Nether
+  login positions redirect to safe Overworld to avoid stale regenerated terrain.
+- Separate offline Java maintenance worker with Windows PowerShell wrappers.
+  Checks PID/start identity, world session locks, plugin maintenance interlock,
+  canonical paths, links/reparse aliases, immutable markers and DIM-1 layout.
+- Full directory copy, file-size/SHA-256 manifest verification, then atomic move
+  of original world into timestamp/UUID backup. New world is generated only on
+  restart through the approved SHA-pinned Java/Paper launcher.
+- Runtime API seed and read-only saved NBT seed checks plus changed generated
+  block/biome fingerprints gate access reopening and successful outcome recording.
+- Explicit shutdown opt-in AND current supervisor PID/token/start proof AND a
+  successful supervised reset/restart rehearsal are required. No taskkill,
+  Stop-Process, forced Java termination or guessed launcher command is used.
+- Explicit operation-ID recovery, quarantined incomplete generations, restored
+  old seed verification and paused schedule after rollback. Default retains three
+  successful valid backups; newest valid recovery is never pruned. Incomplete
+  backups remain for operator inspection; offline pruning may temporarily lag.
+- nether.yml, commands/permissions/completion, operator/recovery installation docs,
+  fixture sources and Linux/Windows build/maintenance workflow.
+Module enabled and automatic-shutdown both default false pending operator setup.
+
+EXECUTED LOCAL MAVEN
+Full Maven reactor clean verify: BUILD SUCCESS. 104 tests, 0 failures/errors/skips.
+Includes previous 76 and 28 Nether tests: five-day schedule/deadline/warning
+persistence, pause/resume, concurrent duplicate requests, CAS/valid transitions,
+backup completeness/hash corruption/extra/missing files, process/session locks,
+path traversal/reserved primary names/link/layout/identity refusal, interrupted
+backup/generation rollback, retained metadata, retention/latest recovery safety,
+NBT seed validation, future schema refusal, async player evacuation/cancellation
+and safe destination checks. All tests use temporary synthetic directories.
+A standalone synthetic fixture also passed real CLI apply/archive/recover on Linux.
+Initial test runs exposed overloaded teleportAsync matcher ambiguity and server-
+registry-dependent Material mocks; these were corrected before passing checks.
+No previous failed run is represented as a successful verification.
+
+EXECUTED DISPOSABLE PAPER / REAL CLIENT
+New isolated 127.0.0.1:25576 server; no production world reused. Paper 1.21.11-132,
+Temurin Java 21.0.13+9, offline Mineflayer 4.39.0. Minecraft EULA had been explicitly
+accepted for temporary test servers in this session.
+- Managed initial seed -9061868090832954130 verified via API and saved NBT.
+- A real client entered Nether, confirmed portal-event routing, resumed the
+  persisted overdue schedule and was evacuated to safe Overworld. WAITING_STOP
+  saved before a normal console stop. Supervisor waited for actual child exit 0.
+- Complete 17-file backup and archive matched; new seed -9074159619984180408
+  and changed block/biome fingerprint verified on approved restart. Old placed
+  diamond sentinel disappeared. Both API seed and saved NBT were checked.
+- Only after that rehearsal, automatic-shutdown was explicitly enabled on the
+  disposable server. Real vanilla portal traversal reached polder_nether.
+  Admin reset evacuated/saved and requested controlled shutdown; real client
+  observed NETHER CONTROLLED AUTOMATIC SHUTDOWN PASS. Supervisor waited for exit,
+  verified a complete 15-file backup, archived, restarted and verified new seed
+  1244958948601003806 with another changed fingerprint. Terrain/portal checks passed.
+- Primary Overworld, End and preserved primary Nether uid.dat hashes remained
+  unchanged through both cycles. Each history row recorded exactly one SUCCESS.
+  All copied backup files matched their corresponding archived originals.
+The test server/worlds/backups are retained. Integration classes are excluded
+from production JARs. Selected evidence and reproducible fixtures are included.
+Live testing also found misleading overdue warning text and repeated completion
+announcements on ordinary restart; final code coalesces warning receipts using
+actual remaining time, skips overdue warnings and only announces real completion.
+The final build also reads the held session.lock through its owning channel when
+copying, avoiding Windows mandatory-lock read conflicts without releasing safety
+ownership before backup verification.
+
+LIMITS / OPERATOR REQUIREMENTS
+Managed-world adoption/migration of existing primary Nether builds is not automatic.
+Install/verify safe Overworld destination, leave primary dimensions intact and use
+only the approved launcher. Ordinary manual launch cannot authorize unattended
+shutdown. Fixed supervisor memory budget is documented (512M initial / 2G maximum).
+Configuration changes require restart. Unknown worlds/paths/storage layouts fail
+closed; network shares, custom generators, multiverse managers and externally
+synchronized inventories require separate compatibility review. No destructive
+operation was tested against production. No forced power-cut or hardware-loss
+simulation was run. Live Paper tests ran on Linux; native Windows Minecraft
+process/portal behavior is not claimed tested. Windows CI checks the actual
+PowerShell wrapper plus synthetic Java backup/recovery and automated tests; its
+actual result is recorded below when available. POSIX symlink refusal ran locally;
+Windows junction/antivirus/storage-driver matrices are not claimed verified.
+Final build ordinary restart: LIVE COUNTDOWN RESTART PERSISTENCE PASS. Last-success,
+next deadline, current seed and operation ID unchanged; IDLE state preserved, no
+false reset-completion announcement. Disposable Paper stopped normally afterward.
+
+ACTUAL GITHUB ACTIONS RESULT (initial review commit 65b8e6a)
+Run 43446627031 completed successfully:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43446627031
+Linux core job 131957646722 and Windows maintenance job 131957647265 both passed
+103 tests (11 Common + 92 Core), zero failures/errors/skips. Windows parsed the
+actual PowerShell scripts and ran the wrapper's apply/archive/recover sequence:
+MAINTENANCE FIXTURE PASS init / archived / recovered. Build and test artifacts
+uploaded. This is actual native Windows CI execution, with synthetic directories;
+no Windows Minecraft server or production world was used.
+Final backup hardening additionally compares the full copied tree directly with
+the stopped source before manifest verification/archive. Its regression test
+rejects a readable, self-consistent copy with different source contents. Final
+local reactor passed 104 tests, including this additional safety check.
+Review PR: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/5

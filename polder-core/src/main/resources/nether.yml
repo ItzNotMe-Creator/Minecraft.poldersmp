@@ -1,0 +1,18 @@
+# Opt in after reading maintenance/README.md. Existing primary Nether is preserved.
+enabled: false
+world-name: polder_nether
+interval-hours: 120
+backup-retention: 3
+# Controlled shutdown requires a verified live maintenance supervisor as well.
+automatic-shutdown: false
+warnings-seconds: [1800, 600, 300, 60, 10]
+safe-location:
+  # Must be the primary NORMAL world from server.properties level-name.
+  world: world
+  use-world-spawn: true
+  x: 0.5
+  y: 100
+  z: 0.5
+verification-timeout-seconds: 180
+portal-search-radius: 128
+portal-create-radius: 16

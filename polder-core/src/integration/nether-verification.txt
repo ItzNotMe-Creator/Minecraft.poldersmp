@@ -1,0 +1,29 @@
+Phase 6 selected disposable-test evidence (2026-11-13):
+
+SOURCE nether-client.log
+CHAT NETHER ENTER PASS -9061868090832954130
+CHAT NETHER PORTAL ROUTING PASS
+CHAT NETHER EVACUATION PASS
+NETHER CLIENT EVACUATION PASS
+
+SOURCE nether-fresh.log
+CHAT NETHER REGENERATION PASS seed=-9074159619984180408
+CHAT NETHER PORTAL ROUTING PASS
+NETHER NEW SEED AND PORTAL PASS
+
+SOURCE nether-auto-client.log
+NETHER PHYSICAL PORTAL PASS
+CHAT NETHER ENTER PASS -9074159619984180408
+NETHER CONTROLLED AUTOMATIC SHUTDOWN PASS
+
+SOURCE nether-auto-fresh.log
+CHAT NETHER REGENERATION PASS seed=1244958948601003806
+CHAT NETHER PORTAL ROUTING PASS
+NETHER NEW SEED AND PORTAL PASS
+
+Both complete backup snapshots matched archived originals: 17 and 15 files.
+Overworld, End and preserved primary Nether uid.dat hashes unchanged.
+Runtime seed, saved NBT seed and changed terrain/biome fingerprints verified.
+LIVE COUNTDOWN RESTART PERSISTENCE PASS
+Last-success / next deadline / seed / operation unchanged on final build restart.
+No false reset success announcement during ordinary restart.

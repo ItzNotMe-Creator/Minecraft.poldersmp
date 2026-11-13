@@ -1,0 +1,58 @@
+# Celestial Arrival — visual effects only. Existing config.yml and seen-player data are preserved.
+enabled: true
+theme: CELESTIAL
+density: HIGH
+smooth-camera:
+  enabled: true
+  # Vanilla display-entity camera interpolation, no client mods or packet library.
+  interpolation-ticks: 2
+setup:
+  # Designed for the supplied floating-island / red-tower / central-avenue screenshots.
+  profile: ISLAND_AVENUE
+  radius: 16
+  height: 24
+  # /joinintro setup island binds these confirmed coordinates to your current world.
+  island-anchor: {x: 0.0, y: 65.0, z: 0.0, yaw: 90.0, pitch: -1.0}
+landing:
+  enabled: true
+  duration-seconds: 4
+  # Totem resurrection VISUAL, without consuming inventory or changing health.
+  totem-overlay: true
+  burst-particles: 160
+  orbit-items: true
+  floating-runes: true
+  nearby-viewers: true
+  viewer-radius: 24
+  maximum-nearby-viewers: 4
+  title: '<gradient:#69ffcf:#ffe5a0><bold>POLDER SMP</bold></gradient>'
+  subtitle: '<gray>Your story begins here, <white><player></white>.</gray>'
+  sound-volume: 0.65
+flight:
+  # Temporary player-only border; the world border and route limits stay intact.
+  hide-world-border: true
+  require-clear-path: true
+  portal-rings: true
+  stardust: true
+  actionbar: '<dark_gray>✦ <aqua>Entering PolderSMP</aqua> • <white>/joinintro skip</white> ✦</dark_gray>'
+performance:
+  maximum-sessions: 8
+  maximum-packets-per-tick: 900
+  maximum-particles-per-tick: 4000
+  maximum-packets-per-session: 400
+# Presets change color and orbit materials. Every entry may be customized.
+themes:
+  CELESTIAL:
+    primary: '#39efbe'
+    secondary: '#ffd166'
+    accent: '#d3fffa'
+    crystal: AMETHYST_SHARD
+  INFERNO:
+    primary: '#ff733b'
+    secondary: '#ff3e87'
+    accent: '#ffe7ae'
+    crystal: BLAZE_ROD
+  AURORA:
+    primary: '#b38aff'
+    secondary: '#55ddff'
+    accent: '#f0f6ff'
+    crystal: ECHO_SHARD

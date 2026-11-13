@@ -814,3 +814,84 @@ Ubuntu bundle 14061831392; Windows bundle 14061137292; both include JARs, defaul
 configuration, source ZIP and checksums. This result supersedes the earlier
 171-test CI count. The final report-only commit changes no production/test code.
 Phase 8 remains a draft pending the explicitly listed client/integration acceptance.
+
+STANDALONE CINEMATIC UPGRADE — CELESTIAL ARRIVAL (2026-11-13)
+Scope: PolderCinematics only, plus its packaging/workflow/documentation. Existing
+Core, Lobby, Velocity and Common implementations are unchanged. Paper 1.21.11,
+Velocity 3.4.0 and Java21 targets/dependency coordinates are unchanged.
+Plugin metadata is 1.1.0-celestial, delivered as one PolderCinematics.jar.
+
+Implemented a private vanilla display-entity spectator camera with client
+interpolation, particle portal/stardust flythrough, gradient scene titles/sounds,
+and a staged controlled landing. Four visual totems/crystals, two floating rune
+displays, double helices, energy rings, totem particles/status-35 overlay,
+shockwave/afterglow and welcome title form the finale. No inventory totem or
+health is consumed/changed. Three palette/material presets and density levels
+are independently configurable in new effects.yml. Existing config/SQLite rows
+are preserved; missing new settings use packaged defaults without rewriting
+custom values. Player and world API work remains on the server thread; SQLite
+remains asynchronous and journaled.
+
+Added one-command route generation, protected 54-slot studio, theme/density/mode/
+duration/border/template commands, route backups and explicit replacement. The
+user's screenshots informed ISLAND_AVENUE: a high reveal and central approach,
+ending at confirmed X0 Y65 Z0 yaw90 pitch-1. /joinintro setup island binds the
+known anchor to the administrator's current actual world, without guessing its
+name. Actual world and original personal borders, chunk budget and sampled
+loaded-block clearance are checked. The optional temporary participant border
+hides the blue grid during the show and restores the exact prior border instance;
+it does not modify the world border or extend the allowed route. Explicit
+particle packets/counts, viewer fan-out, visual sessions and temporary entities
+are bounded. Disconnect/skip/failure cleanup and the existing restoration journal
+cover both camera and landing phases. Displays are marked, private, nonpersistent,
+invulnerable visual entities; they are not dropped items or fake players.
+
+Local targeted clean verify succeeded: 29 tests (Common11 + Cinematics18), zero
+failures/errors/skips. Native disposable Paper 1.21.11 build132, loopback25580,
+passed all three themes and exact island preset: four confirmed totem pops, 621
+camera-entity move packets, 19,414 particle packets / seven types. Server probes
+confirmed original Survival mode/flight restoration, six landing visuals, no
+actual totem/diamond/health change, personal-border identity restoration and
+unchanged world border, protected GUI extraction, skip cleanup, disconnect during
+landing/reconnect, and intentionally unsafe-floor recovery followed by repair/
+skip. Journals and visual entities cleared after successful completion. The
+expected failed-landing error in that fault-injection scenario is not hidden.
+
+Initial tests caught Paper registry assumptions in serverless validation tests,
+Bukkit YAML default semantics, a harness bundle-packet callback, and immediate
+setup using a raw Map instead of a ConfigurationSection. These were corrected
+before the successful runs; failed test profiles/logs were retained.
+
+Standalone packaging/workflow includes only this plugin and public default config,
+setup/verification docs and SHA256 checksums. Real graphical framing on the user's
+actual island is still pending: the world itself is not in this workspace, and
+protocol tests cannot establish visual smoothness/FOV/comfort. Exact continuation:
+install the single JAR, run /joinintro setup island (or setup island replace to
+back up an existing route), preview on the actual Minecraft client, and check
+roof/tree clearance, tower framing, the landing spectacle and skip. No Phase9 or
+Phase10 network/deployment implementation was added. Actual CI results will be
+recorded only after their runs finish.
+
+CELESTIAL FINAL LIFECYCLE / ACTUAL CI RESULTS
+Confirmed an active smooth-camera snapshot before requesting graceful Ctrl+C
+shutdown of the disposable Paper process (the workspace reconnection had invalidated
+its old console session handle). Paper saved all dimensions normally. Parsed
+compressed player NBT verified Survival, flight/flying0, health20, two real totems,
+Pos[0,65,0] and Rotation[90,-1]; the recovery journal cleared and SQLite integrity
+passed. This was a real active-camera shutdown, not an assumed completed intro.
+Then removed the fixture JAR temporarily and restarted with exactly one plugin,
+PolderCinematics. A normal automatic join completed camera/landing/totem/cleanup,
+with two totems/health20 unchanged and explicit border packets80→10000→80. No
+orphan display entities or pending snapshots remained; seen state persisted.
+The server stopped normally; the fixture JAR, all worlds and player data remain.
+
+Actual standalone CI run43487967318 on production/test code0e26976357b21ff94441c2c0e1a1925342730f74:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43487967318
+Linux job132101364305 and Windows job132101364756 both passed all29 tests
+(Common11+Cinematics18), zero failures/errors/skips, BUILD SUCCESS and standalone
+packaging/upload. Read both job logs. Windows artifact14069060749; Ubuntu14069075242.
+Both deliver ONLY PolderCinematics.jar plus its installation ZIP/config/docs and
+checksums. PR8: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/8
+The final follow-up changes verification docs and test packet observation only;
+no further production changes were made after the tested code commit. Visual
+acceptance on the actual island remains the documented operator preview task.

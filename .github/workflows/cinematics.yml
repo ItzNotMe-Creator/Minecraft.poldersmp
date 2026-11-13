@@ -1,0 +1,42 @@
+name: Standalone Celestial Cinematics
+on:
+  push:
+    branches: ['cinematics/**']
+  pull_request:
+    paths:
+      - 'polder-cinematics/**'
+      - 'polder-common/**'
+      - 'scripts/package-cinematics.py'
+      - '.github/workflows/cinematics.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cinematic:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - run: mvn -B -U -pl polder-cinematics -am clean verify
+      - run: python scripts/package-cinematics.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PolderCinematics-Celestial-${{ matrix.os }}
+          path: dist/cinematics/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cinematics-tests-${{ matrix.os }}
+          path: |
+            polder-common/target/surefire-reports/*
+            polder-cinematics/target/surefire-reports/*

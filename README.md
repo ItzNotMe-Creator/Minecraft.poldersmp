@@ -598,3 +598,22 @@ Build the full reactor with `mvn -B -U clean verify`, then run
 The Phase 8 GitHub Actions workflow builds all modules on Linux and Windows and
 uploads these artifacts plus test reports. This is not the Phase 10 USB installer.
 See BUILD-REPORT.txt for executed tests and remaining acceptance limitations.
+
+## Standalone cinematic upgrade: Celestial Arrival
+
+The separate **PolderCinematics.jar 1.1.0-celestial** now provides an interpolated
+vanilla camera, particle portals, orbiting totems/crystals, floating runes, spiral
+energy rings, a totem-pop finale and three configurable visual presets. It works
+alone on Paper 1.21.11 / Java 21. No Lobby/Core/ProtocolLib plugin is required.
+
+The supplied floating-island screenshots have a dedicated avenue approach ending
+at **0,65,0 / yaw90 / pitch-1**. Run `/joinintro setup island` in the actual lobby
+world, then `/joinintro preview`. Existing routes are preserved unless explicitly
+replaced with a backup. `/joinintro studio` provides theme/density/preview controls.
+The existing restoration database and configuration are preserved on upgrade.
+
+Read [the focused setup guide](polder-cinematics/SETUP.md) and
+[executed verification / visual acceptance](polder-cinematics/VERIFICATION.md).
+Build only this plugin with `mvn -B -pl polder-cinematics -am clean verify`, then
+`python scripts/package-cinematics.py`. The cinematics workflow uploads a single
+plugin JAR, single-plugin ZIP and checksums for Linux and Windows.

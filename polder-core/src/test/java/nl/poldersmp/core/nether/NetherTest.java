@@ -406,4 +406,13 @@ class NetherTest {
     tool().recover(failed.get("operation"));
     assertEquals(42, NbtSeed.read(root.resolve("polder_nether/level.dat")));
   }
+
+  @Test
+  void selfConsistentBackupMustStillMatchOriginalSource() throws Exception {
+    Path source = root.resolve("polder_nether"), copy = root.resolve("verification-copy");
+    NetherFiles.copy(source, copy);
+    NetherFiles.verifySource(source, copy, Map.of());
+    Files.writeString(copy.resolve("DIM-1/region/r.0.0.mca"), "wrong but fully readable content");
+    assertThrows(IOException.class, () -> NetherFiles.verifySource(source, copy, Map.of()));
+  }
 }

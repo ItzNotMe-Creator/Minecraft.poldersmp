@@ -89,7 +89,7 @@ maintenance log and launcher proof/configuration live beside this database.
 
 `nether-backups/<UTC timestamp>-<operation UUID>/` contains:
 
-- snapshot/: complete copied world, verified against per-file size/SHA-256 hashes;
+- snapshot/: complete copied world, compared with the stopped source and verified against per-file size/SHA-256 hashes;
 - manifest.properties and owner.properties;
 - previous-world/: the atomically moved original, after backup verification;
 - optional quarantine-* directories retained during recovery.

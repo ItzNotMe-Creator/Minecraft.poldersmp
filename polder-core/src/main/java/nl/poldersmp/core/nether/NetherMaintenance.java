@@ -79,6 +79,8 @@ public final class NetherMaintenance {
                     backup.resolve("previous-world").toString()));
         log("BACKUP " + id + " " + target + " -> " + backup);
         NetherFiles.copy(target, backup.resolve("snapshot"), stopped.sessionContents(target));
+        NetherFiles.verifySource(
+            target, backup.resolve("snapshot"), stopped.sessionContents(target));
         NetherFiles.manifest(backup);
         if (NbtSeed.read(backup.resolve("snapshot/level.dat")) != s.number("old-seed"))
           throw new IOException("Backup seed mismatch");

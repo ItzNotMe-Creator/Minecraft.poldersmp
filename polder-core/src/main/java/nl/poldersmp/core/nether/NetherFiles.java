@@ -121,6 +121,32 @@ public final class NetherFiles {
     }
   }
 
+  /** Verify the copied tree against its stopped source, not only against itself. */
+  public static void verifySource(Path source, Path snapshot, Map<Path, byte[]> lockedFiles)
+      throws Exception {
+    Set<String> expected = new HashSet<>();
+    for (Path p : tree(source)) {
+      String relative = source.relativize(p).toString();
+      expected.add(relative);
+      Path copy = snapshot.resolve(relative);
+      if (Files.isDirectory(p)) {
+        if (!Files.isDirectory(copy))
+          throw new IOException("Missing backup directory: " + relative);
+      } else {
+        String original =
+            lockedFiles.containsKey(p)
+                ? HexFormat.of()
+                    .formatHex(MessageDigest.getInstance("SHA-256").digest(lockedFiles.get(p)))
+                : sha(p);
+        if (!Files.isRegularFile(copy) || !original.equals(sha(copy)))
+          throw new IOException("Source/backup mismatch: " + relative);
+      }
+    }
+    Set<String> actual = new HashSet<>();
+    for (Path p : tree(snapshot)) actual.add(snapshot.relativize(p).toString());
+    if (!actual.equals(expected)) throw new IOException("Source/backup tree mismatch");
+  }
+
   public static void manifest(Path container) throws Exception {
     Path snapshot = container.resolve("snapshot");
     Properties hashes = new Properties();

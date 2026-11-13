@@ -423,8 +423,8 @@ FEATURES
 Module enabled and automatic-shutdown both default false pending operator setup.
 
 EXECUTED LOCAL MAVEN
-Full Maven reactor clean verify: BUILD SUCCESS. 103 tests, 0 failures/errors/skips.
-Includes previous 76 and 27 Nether tests: five-day schedule/deadline/warning
+Full Maven reactor clean verify: BUILD SUCCESS. 104 tests, 0 failures/errors/skips.
+Includes previous 76 and 28 Nether tests: five-day schedule/deadline/warning
 persistence, pause/resume, concurrent duplicate requests, CAS/valid transitions,
 backup completeness/hash corruption/extra/missing files, process/session locks,
 path traversal/reserved primary names/link/layout/identity refusal, interrupted
@@ -482,3 +482,18 @@ Windows junction/antivirus/storage-driver matrices are not claimed verified.
 Final build ordinary restart: LIVE COUNTDOWN RESTART PERSISTENCE PASS. Last-success,
 next deadline, current seed and operation ID unchanged; IDLE state preserved, no
 false reset-completion announcement. Disposable Paper stopped normally afterward.
+
+ACTUAL GITHUB ACTIONS RESULT (initial review commit 65b8e6a)
+Run 43446627031 completed successfully:
+https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/actions/runs/43446627031
+Linux core job 131957646722 and Windows maintenance job 131957647265 both passed
+103 tests (11 Common + 92 Core), zero failures/errors/skips. Windows parsed the
+actual PowerShell scripts and ran the wrapper's apply/archive/recover sequence:
+MAINTENANCE FIXTURE PASS init / archived / recovered. Build and test artifacts
+uploaded. This is actual native Windows CI execution, with synthetic directories;
+no Windows Minecraft server or production world was used.
+Final backup hardening additionally compares the full copied tree directly with
+the stopped source before manifest verification/archive. Its regression test
+rejects a readable, self-consistent copy with different source contents. Final
+local reactor passed 104 tests, including this additional safety check.
+Review PR: https://github.com/ItzNotMe-Creator/Minecraft.poldersmp/pull/5

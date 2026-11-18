@@ -2,6 +2,7 @@ package nl.poldersmp.core;
 
 import java.util.*;
 import nl.poldersmp.common.*;
+import nl.poldersmp.core.nether.*;
 import org.bukkit.command.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,6 +10,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
   private Settings settings;
   private Database database;
   private volatile String databaseState = "disabled";
+  private NetherService nether;
 
   @Override
   public void onEnable() {
@@ -25,6 +27,7 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
       getLogger().info("Foundation module disabled in configuration");
       return;
     }
+    startNether();
     if (settings.databaseEnabled()) {
       database = new Database(getDataFolder().toPath().resolve("polder.db"));
       databaseState = "starting";
@@ -43,8 +46,26 @@ public final class PolderCore extends JavaPlugin implements TabExecutor {
     }
   }
 
+  /** Phase 6: automatic Nether reset. A failure here must never stop the rest of PolderCore. */
+  private void startNether() {
+    try {
+      nether = new NetherService(this);
+      NetherCommands commands = new NetherCommands(nether);
+      for (String name : List.of("nether", "netheradmin")) {
+        Objects.requireNonNull(getCommand(name)).setExecutor(commands);
+        Objects.requireNonNull(getCommand(name)).setTabCompleter(commands);
+      }
+      if (nether.start()) {
+        getServer().getPluginManager().registerEvents(new NetherListener(this, nether), this);
+      }
+    } catch (RuntimeException e) {
+      getLogger().severe("Nether reset feature failed to start: " + e);
+    }
+  }
+
   @Override
   public void onDisable() {
+    if (nether != null) nether.stop();
     if (database != null) database.close();
   }
 

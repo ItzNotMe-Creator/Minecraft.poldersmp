@@ -1,0 +1,66 @@
+# PolderSMP - automatic Nether reset (Phase 6)
+#
+# IMPORTANT: read docs/NETHER-RESET.md before changing anything marked "safety".
+# The Overworld and the End are never reset. Only the separate resource Nether
+# (the world named by world.key) is replaced, and it gets a NEW random seed each time.
+# Changes need a server restart.
+
+enabled: true
+
+# Hours between resets. 120 hours = 5 real-world days.
+interval-hours: 120
+
+world:
+  # The resource Nether is a separate Nether world with its own seed (namespace:name).
+  # Paper keeps one seed for the whole main world, so deleting the vanilla Nether folder
+  # could never give a different seed. A separate world can.
+  key: "polder:resource_nether"
+
+# While true, Nether portals always lead to the resource Nether and the vanilla
+# Nether of the main world is left untouched and unused.
+block-primary-nether: true
+
+announcements:
+  # Seconds before the reset. 30 min, 10 min, 5 min, 1 min, 10 s.
+  seconds-before: [1800, 600, 300, 60, 10]
+
+# If the server was off when a reset was due, players still get this much warning after the restart.
+resume-delay-minutes: 30
+# A reset that is overdue by less than this many seconds starts right away.
+overdue-grace-seconds: 60
+
+evacuation:
+  # How far around the Overworld spawn to search for a safe place to put players.
+  search-radius: 24
+
+automation:
+  # safety: false = the plugin only prepares the reset (locks the Nether, moves players out,
+  # saves) and then tells you to stop the server and run the maintenance tool yourself.
+  # true  = the plugin also stops the server cleanly (never a kill) for the maintenance tool.
+  # It can only be true when launcher-verified is also true.
+  shutdown-enabled: false
+  # safety: set to true ONLY after you have run the whole reset by hand once and your
+  # start script restarts the server correctly. See docs/NETHER-RESET.md.
+  launcher-verified: false
+  # Start script of the SMP server, relative to the server folder (for example start.cmd).
+  launcher-path: ""
+
+backup:
+  # Relative to the server folder. Must NOT be inside any world folder.
+  directory: "backups/nether"
+  # How many verified backups to keep. The newest verified backup is never deleted.
+  keep: 3
+
+verify:
+  # safety: the reset only counts as successful when the new Nether really has the new seed.
+  require-new-seed: true
+
+# Messages use MiniMessage. {time} is replaced with the time left.
+messages:
+  countdown: "<gold>[Nether]</gold> The Nether resets in <yellow>{time}</yellow>. Leave the Nether before then!"
+  locked: "<gold>[Nether]</gold> The Nether is now closed for its scheduled reset."
+  evacuated: "<gold>[Nether]</gold> You were moved to the Overworld because the Nether is resetting."
+  shutdown: "<gold>[Nether]</gold> The server is stopping for the Nether reset."
+  completed: "<gold>[Nether]</gold> <green>The Nether has been reset. A brand new Nether is open!</green>"
+  failed: "<gold>[Nether]</gold> <red>The Nether reset did not finish. Nether access stays closed until an admin fixes it.</red>"
+  denied: "<gold>[Nether]</gold> <red>The Nether is closed right now.</red>"

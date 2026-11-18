@@ -1,13 +1,23 @@
 name: PolderCore
 version: 1.0.0-SNAPSHOT
 main: nl.poldersmp.core.PolderCore
-api-version: '1.21.11'
-description: PolderSMP Phase 1 foundation
+api-version: '26.3'
+description: PolderSMP core (foundation, automatic Nether reset)
 commands:
   poldercore:
     description: PolderCore administration
     usage: /poldercore <info|reload|debug>
+  nether:
+    description: Show the next Nether reset
+    usage: /nether [next|info]
+  netheradmin:
+    description: Control the automatic Nether reset
+    usage: /netheradmin <reset [now] confirm|pause|resume>
 permissions:
+  polder.nether.use:
+    default: true
+  polder.nether.admin:
+    default: op
   poldercore.info:
     default: op
   poldercore.reload:

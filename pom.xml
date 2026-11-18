@@ -12,13 +12,14 @@
     <module>polder-core</module>
     <module>polder-lobby</module>
     <module>polder-velocity</module>
+    <module>polder-maintenance</module>
   </modules>
 
 
   <properties>
     <maven.compiler.release>21</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+    <paper.version>26.3.build.254-stable</paper.version>
     <velocity.version>3.4.0-SNAPSHOT</velocity.version>
   </properties>
 

@@ -166,6 +166,37 @@ public final class BackupService {
     return before;
   }
 
+  /**
+   * Recovery: copies a verified archive back to {@code target} (which must not exist). The archive is
+   * kept, so a restore never reduces the number of backups. The copy is verified against the archive's
+   * manifest before it is accepted; on any mismatch the partial copy is removed and an exception thrown.
+   */
+  public static void restore(Path archive, Path target) throws IOException {
+    List<String> problems = verifyArchive(archive);
+    if (!problems.isEmpty()) {
+      throw new IOException("Archive is not valid, refusing to restore from it: " + problems);
+    }
+    if (Files.exists(target)) {
+      throw new IOException("Restore target already exists, refusing to overwrite: " + target);
+    }
+    Files.createDirectories(target.toAbsolutePath().getParent());
+    Manifest expected = readManifest(archive.resolve(MANIFEST_NAME));
+    try {
+      copyTree(archive, target);
+      Files.deleteIfExists(target.resolve(MANIFEST_NAME));
+      Files.deleteIfExists(target.resolve(STATUS_NAME));
+      List<String> copyProblems = compare(expected, scan(target));
+      if (!copyProblems.isEmpty()) {
+        throw new IOException("Restored copy is not identical to the archive: " + copyProblems);
+      }
+    } catch (IOException | RuntimeException e) {
+      if (Files.exists(target)) {
+        deleteTree(target); // we created it a moment ago, so this is our own partial copy
+      }
+      throw e;
+    }
+  }
+
   /** Writes the "this archive was verified" marker that retention relies on. */
   public static void markValid(Path archive, String operationId, Long oldSeed) throws IOException {
     java.util.Properties p = new java.util.Properties();

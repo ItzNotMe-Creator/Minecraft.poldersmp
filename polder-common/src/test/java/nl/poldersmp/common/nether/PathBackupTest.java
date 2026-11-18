@@ -175,6 +175,29 @@ class PathBackupTest {
     assertTrue(BackupService.isMarkedValid(archive));
   }
 
+  @Test
+  void restoreCopiesBackVerifiedAndKeepsTheArchive() throws Exception {
+    fillNether("original");
+    Path archive = backups.resolve("r1");
+    BackupService.archive(nether, archive);
+    BackupService.restore(archive, nether);
+    assertEquals("original", Files.readString(nether.resolve("region/r.0.0.mca")));
+    assertFalse(Files.exists(nether.resolve(BackupService.MANIFEST_NAME)), "no tool files in the live world");
+    assertTrue(Files.exists(archive.resolve("region/r.0.0.mca")), "backup is kept");
+    assertEquals(List.of(), BackupService.verifyArchive(archive));
+  }
+
+  @Test
+  void restoreRefusesDamagedArchiveAndExistingTarget() throws Exception {
+    fillNether("original");
+    Path archive = backups.resolve("r2");
+    BackupService.archive(nether, archive);
+    assertThrows(IOException.class, () -> BackupService.restore(archive, primaryNether.getParent()));
+    Files.writeString(archive.resolve("region/r.0.0.mca"), "bad");
+    assertThrows(IOException.class, () -> BackupService.restore(archive, nether));
+    assertFalse(Files.exists(nether), "nothing half-restored is left behind");
+  }
+
   // ---------------- retention ----------------
 
   RetentionPolicy.BackupInfo info(String name, long age, boolean valid) {

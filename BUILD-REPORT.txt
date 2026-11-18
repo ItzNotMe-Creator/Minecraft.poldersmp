@@ -81,3 +81,45 @@ test-results artifacts uploaded successfully. CI validates compilation/unit
 tests/packaging; live runtime smoke tests were executed locally.
 The eventual USB deployment ZIP and gameplay systems belong to later phases.
 No Phase 2 implemented. No changes to live worlds, secrets or player data.
+
+
+==========================================================================
+PHASE 6: AUTOMATIC NETHER RESET            Date: 2026-11-18  Branch: claude/phase6-nether-reset
+==========================================================================
+BUILT
+- polder-common: nl.poldersmp.common.nether (pure logic): ResetPhase state machine, ResetState +
+  atomic ResetStateStore, NetherSchedule, Countdown, NetherSeed, NetherSettings (validated), PathGuard,
+  BackupService (SHA-256 manifest, verified archive, verified restore), RetentionPolicy, SafeSpotFinder,
+  PostResetVerifier.
+- polder-maintenance (new module): NetherTool CLI (status, run, start, recover, verify, cleanup),
+  MaintenanceRunner, ServerStopCheck (session.lock + game port), logging to logs/nether-maintenance.log,
+  shaded runnable PolderMaintenance.jar, scripts/nether-maintenance.cmd. No code that stops/kills a process.
+- polder-core: nl.poldersmp.core.nether (NetherService, NetherListener, NetherCommands, BukkitTerrain),
+  nether.yml, /nether [next|info], /netheradmin reset|pause|resume, permissions polder.nether.use/admin.
+- docs/NETHER-RESET.md (installation, dry run, operator guide, limits).
+- Toolchain change: Paper API 1.21.11 -> 26.3.build.254-stable (checked against the official Paper Maven
+  metadata), Java 25 for polder-core/polder-lobby, CI uses JDK 25.
+
+SEED APPROACH (investigated, not assumed)
+The main world has one global seed in Paper 26.x; deleting or replacing the Nether sub-folder cannot give a
+new seed. A separate resource-Nether world is created with WorldCreator.ofKey(key).seed(seed); the plugin
+verifies World.getSeed() == the prepared seed and != the previous seed before re-opening Nether access.
+
+EXECUTED CHECKS (real results)
+- GitHub Actions run 44286460633 (mvn -B -U clean verify, JDK 25): BUILD SUCCESS for parent, common, core,
+  lobby, velocity, maintenance. polder-core compiled against paper-api 26.3.build.254-stable.
+  JUnit: polder-common 70 tests (59 Nether + 11 Phase 1), polder-maintenance 23 tests, 0 failures.
+- Same Nether tests also run locally with javac and a small stand-in JUnit runner (82 tests) before pushing.
+- Local smoke run of the real NetherTool CLI against a disposable folder: status, run, verify, start refusal.
+  Overworld file untouched, old Nether archived with manifest, exit codes 0/0/0/2.
+- Tests use JUnit @TempDir fake server trees only. No destructive operation was run on any real world.
+
+NOT VERIFIED (be honest)
+- NOT run on a real Paper 26.3 server: world creation with a seed, World.getWorldPath(), the folder Paper uses
+  for the custom world, portal routing/1:8 scaling, teleport evacuation, restart behaviour of API-created
+  worlds, the real SMP launcher. Only compilation against the Paper API is proven.
+- Windows behaviour of the tool (session.lock/port detection, cmd launcher) is tested on Linux only.
+- Player evacuation logic (SafeSpotFinder) is unit tested against a fake terrain, not a real world.
+- scripts/smoke-test.py still targets Paper 1.21.11 / Java 21 and was not updated or run.
+- No unattended shutdown is enabled. Do the dry run in docs/NETHER-RESET.md first.
+Phase 7 was not started.

@@ -1,16 +1,24 @@
-# PolderSMP — Phase 1 foundation
+# PolderSMP — foundation + Phase 6 Nether reset
 
-Four-module Java 21 / Maven project. This repository was empty when cloned; this
+Five-module Maven project (Java 25 for the Paper plugins, Java 21 for the rest). This repository was empty when cloned; this
 foundation was created with the owner's permission. No previous implementations,
 build reports, or tests were present to preserve.
 
 ## Supported versions
 
-- Minecraft / Paper **1.21.11**, `io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT`.
+- Minecraft / Paper **26.3**, `io.papermc.paper:paper-api:26.3.build.254-stable` (moved from 1.21.11 in Phase 6; the exact build is pinned in `pom.xml`).
 - Velocity **3.4.0**, `com.velocitypowered:velocity-api:3.4.0-SNAPSHOT`.
-- JDK **21** (a JRE alone is insufficient), Maven **3.9.11** recommended.
+- JDK **25** to build (PolderCore/PolderLobby are Java 25 class files; common, Velocity and the maintenance tool target Java 21), Maven **3.9.11** recommended.
 - Official API repository: https://repo.papermc.io/repository/maven-public/
 - Maven Central: https://repo.maven.apache.org/maven2/
+
+## Phase 6: automatic Nether reset
+
+PolderCore resets a separate resource Nether every 120 hours with a new random seed; the Overworld and
+End are never touched. `polder-maintenance` builds `PolderMaintenance.jar`, the Windows tool that backs up
+and moves the old Nether while the server is stopped. Installation, the first-time dry run and the operator
+guide: **[docs/NETHER-RESET.md](docs/NETHER-RESET.md)**. Config: `plugins/PolderCore/nether.yml`.
+Unattended shutdown is OFF until you verify the launcher yourself.
 
 ## Build
 
@@ -94,7 +102,7 @@ supplies foundation plugins and source only.
 
 ## Repeat runtime checks
 
-After building, supply official Paper 1.21.11 and Velocity 3.4.0 server JARs:
+After building, supply official Paper and Velocity server JARs (note: `scripts/smoke-test.py` was written for Paper 1.21.11 / Java 21 and has not been updated for Paper 26.3 / Java 25 in Phase 6):
 
 ```
 python3 scripts/smoke-test.py --paper-jar /path/to/paper.jar --velocity-jar /path/to/velocity.jar --accept-eula --output /path/to/new-test-directory
